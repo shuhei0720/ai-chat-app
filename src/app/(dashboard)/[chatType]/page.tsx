@@ -6,13 +6,13 @@ const ChatTypePage = ({params}: {params: {chatType: string}}) => {
 
     const allowedChatType = [
         "conversation",
-        "image_genalation",
+        "image_generation",
         "text_to_speech",
         "speech_to_text",
         "image_analysis",
     ];
 
-    if(!allowedChatType.includes("params.chatType")) {
+    if(!allowedChatType.includes(params.chatType)) {
         return notFound()
     }
   return (
