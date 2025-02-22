@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 const BotAvatar = () => {
   return (
     <Avatar>
-        <AvatarImage src="https://github.com/shadcn.png" />
+        <AvatarImage src="/ai_logo.svg" />
         <AvatarFallback>CN</AvatarFallback>
     </Avatar>
   )
