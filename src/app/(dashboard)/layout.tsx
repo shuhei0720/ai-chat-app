@@ -5,8 +5,8 @@ export default function DashboardRayout({
   }>) {
     return (
       <div className="flex">
-        <div className="bg-red-400 w-1/4">Sidebar</div>
-        <main className="bg-blue-400 w-3/4">{children}</main>
+        <div className="hidden bg-red-400 lg:w-1/4 lg:block">Sidebar</div>
+        <main className="bg-blue-400 w-full lg:w-3/4">{children}</main>
       </div>
     );
   }
