@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import BotAvatar from "./BotAvatar";
 import {
   Ellipsis,
@@ -14,11 +14,20 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query, Timestamp, where } from "firebase/firestore";
 import { db } from "@/lib/firebase/firebaseClient";
 import { useAuth } from "@/context/AuthContext";
 
+interface ChatRoom {
+  id: string;
+  type: string;
+  first_message: string;
+  user_id: string;
+  last_updated: Timestamp;
+}
+
 const Sidebar = () => {
+  const[chatRooms,setChatRooms] = useState<ChatRoom[]>([]);
   const pathname = usePathname();
   const {currentUser} = useAuth();
   // console.log(pathname);
@@ -31,12 +40,18 @@ const Sidebar = () => {
   );
 
   const unsubscribe = onSnapshot(q,(snapShot) => {
-    const FetchChatRooms = snapShot.docs.map((doc) => (
+    const fetchChatRooms = snapShot.docs.map((doc) => (
       {
         id: doc.id,
-        ...doc.data(),
+        type: doc.data().type,
+        first_message: doc.data().first_message,
+        user_id: doc.data().user_id,
+        last_updated: doc.data().last_updated,
+        // ...doc.data(),
       }
     ))
+    console.log(fetchChatRooms);
+    setChatRooms(fetchChatRooms);
     return () => unsubscribe();
   })
   },[]);
