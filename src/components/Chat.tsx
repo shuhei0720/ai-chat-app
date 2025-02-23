@@ -2,10 +2,14 @@ import React from 'react'
 import ChatMessage from '@/components/ChatMessage'
 import ChatForm from '@/components/ChatForm'
 
-const Chat = () => {
+interface ChatProps {
+  chatId: string,
+}
+
+const Chat = ({chatId}:ChatProps) => {
   return (
     <>
-      <ChatMessage />
+      <ChatMessage chatId={chatId}/>
       <ChatForm />
     </>
   )

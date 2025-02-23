@@ -53,8 +53,8 @@ const Sidebar = () => {
     ))
     console.log(fetchChatRooms);
     setChatRooms(fetchChatRooms);
-    return () => unsubscribe();
   })
+  return () => unsubscribe();
   },[]);
 
   const routes = [
