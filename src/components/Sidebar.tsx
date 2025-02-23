@@ -17,14 +17,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { collection, onSnapshot, orderBy, query, Timestamp, where } from "firebase/firestore";
 import { db } from "@/lib/firebase/firebaseClient";
 import { useAuth } from "@/context/AuthContext";
-
-interface ChatRoom {
-  id: string;
-  type: string;
-  first_message: string;
-  user_id: string;
-  last_updated: Timestamp;
-}
+import { ChatRoom } from "@/types";
 
 const Sidebar = () => {
   const[chatRooms,setChatRooms] = useState<ChatRoom[]>([]);
