@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import BotAvatar from "./BotAvatar";
 import {
   Ellipsis,
@@ -14,10 +14,32 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import { db } from "@/lib/firebase/firebaseClient";
+import { useAuth } from "@/context/AuthContext";
 
 const Sidebar = () => {
   const pathname = usePathname();
-  console.log(pathname);
+  const {currentUser} = useAuth();
+  // console.log(pathname);
+
+  useEffect(() => {
+    const q = query(
+    collection(db, "chats"),
+    where("user_id", "==", currentUser?.uid),
+    orderBy("last_updated", "desc"),
+  );
+
+  const unsubscribe = onSnapshot(q,(snapShot) => {
+    const FetchChatRooms = snapShot.docs.map((doc) => (
+      {
+        id: doc.id,
+        ...doc.data(),
+      }
+    ))
+    return () => unsubscribe();
+  })
+  },[]);
 
   const routes = [
     {
