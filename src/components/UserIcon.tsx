@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useAuth } from '@/context/AuthContext'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
@@ -14,9 +14,15 @@ const UserIcon = () => {
   console.log(currentUser?.photoURL);
   const photoURL = currentUser?.photoURL ? currentUser.photoURL : undefined;
 
+  useEffect(() => {
+    if(!currentUser) {
+      router.push("/login");
+    }
+  },[currentUser]);
+
   const handleLogout = () => {
     signOut(auth).then(() => {
-      router.push("/login");
+      // router.push("/login");
     }).catch((error) => {
       console.log(error);
     })
