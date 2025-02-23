@@ -1,3 +1,4 @@
+import Chat from "@/components/Chat";
 import { notFound } from "next/navigation";
 import React from "react";
 
@@ -15,7 +16,10 @@ const ChatTypePage = ({ params }: { params: { chatType: string } }) => {
   if (!allowedChatType.includes(params.chatType)) {
     return notFound();
   }
-  return <div>ChatTypePage</div>;
+  return (
+    // <div>ChatTypePage</div>;
+    <Chat />
+  )
 };
 
 export default ChatTypePage;

@@ -12,8 +12,10 @@ export default function DashboardRayout({
         <Sidebar />
       </div>
       <main className="bg-blue-400 w-full lg:w-3/4">
-        <Navbar />
-        {children}
+        <div className="flex flex-col h-full">
+          <Navbar />
+          {children}
+        </div>
       </main>
     </div>
   );
