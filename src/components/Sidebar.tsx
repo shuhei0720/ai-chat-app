@@ -33,6 +33,7 @@ const Sidebar = () => {
   // console.log(pathname);
 
   useEffect(() => {
+    if(!currentUser) return
     const q = query(
     collection(db, "chats"),
     where("user_id", "==", currentUser?.uid),
