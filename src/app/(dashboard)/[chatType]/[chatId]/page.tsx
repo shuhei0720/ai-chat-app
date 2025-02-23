@@ -4,7 +4,7 @@ import React from "react";
 
 const ChatRoomPage = ({ params }: { params: { chatType: string, chatId: string} }) => {
   console.log(params);
-  const {chatId} = params
+  const {chatId,chatType } = params
   console.log(chatId);
   const allowedChatType = [
     "conversation",
@@ -18,7 +18,7 @@ const ChatRoomPage = ({ params }: { params: { chatType: string, chatId: string} 
     return notFound();
   }
   return (
-    <Chat chatId={chatId}/>
+    <Chat chatId={chatId} chatType={chatType}/>
   )
 };
 

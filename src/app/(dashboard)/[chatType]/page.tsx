@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import React from "react";
 
 const ChatTypePage = ({ params }: { params: { chatType: string } }) => {
-  console.log(params);
+  const {chatType} = params
+  // console.log(params);
 
   const allowedChatType = [
     "conversation",
@@ -18,7 +19,7 @@ const ChatTypePage = ({ params }: { params: { chatType: string } }) => {
   }
   return (
     // <div>ChatTypePage</div>;
-    <Chat />
+    <Chat chatType={chatType}/>
   )
 };
 

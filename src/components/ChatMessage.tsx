@@ -12,12 +12,14 @@ import {
 import { db } from "@/lib/firebase/firebaseClient";
 import { TextMessage } from "@/types";
 import UserAvatar from "@/components/UserAvatar";
+import Panel from "@/components/Panel";
 
 interface ChatMessageProps {
-  chatId: string;
+  chatId?: string,
+  chatType: string,
 }
 
-const ChatMessage = ({ chatId }: ChatMessageProps) => {
+const ChatMessage = ({ chatId,chatType}: ChatMessageProps) => {
   const [messages, setMessages] = useState<TextMessage[]>([]);
   console.log(chatId);
 
@@ -43,23 +45,29 @@ const ChatMessage = ({ chatId }: ChatMessageProps) => {
     return () => unsubscribe();
   }, []);
   return (
-    <div className="flex-1 p-4 space-y-4 overflow-auto">
-      {messages.map((message) => (
-        <div key={message.id} className="flex space-x-4">
-          {message.sender === "user" ? (
-            <UserAvatar />
-          ) : (
-            <BotAvatar />
-          )}
-          <div>
-            {/* メッセージのタイプによってタグを変える */}
-            <div className="bg-white p-4 rounded-lg shadow break-all whitespace-pre-wrap">
-              <p>{message.content}</p>
+    <>
+      {!chatId ? (
+        <Panel chatType={chatType}/>
+      ) : (
+        <div className="flex-1 p-4 space-y-4 overflow-auto">
+        {messages.map((message) => (
+          <div key={message.id} className="flex space-x-4">
+            {message.sender === "user" ? (
+              <UserAvatar />
+            ) : (
+              <BotAvatar />
+            )}
+            <div>
+              {/* メッセージのタイプによってタグを変える */}
+              <div className="bg-white p-4 rounded-lg shadow break-all whitespace-pre-wrap">
+                <p>{message.content}</p>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+      )}
+    </>
   );
 };
 
