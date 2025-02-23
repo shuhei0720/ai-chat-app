@@ -41,7 +41,8 @@ const Panel = ({chatType}: {chatType: string}) => {
         <Image
             alt="Empty" 
             fill 
-            src={imageUrl} 
+            src={imageUrl}
+            priority
         />
         </div>
         <p className="text-muted-foreground text-sm text-center">{message}</p>
