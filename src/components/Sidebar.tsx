@@ -1,6 +1,8 @@
 import React from 'react'
 import BotAvatar from './BotAvatar'
 import { FileImage, FileOutput, FileSearch2, MessageCircle, Speech } from 'lucide-react'
+import Link from 'next/link'
+import { cn } from '@/lib/utils'
 
 const Sidebar = () => {
 
@@ -37,7 +39,7 @@ const Sidebar = () => {
     }
   ]
   return (
-    <div className='bg-gray-900 text-white p-3 h-full'>
+    <div className='space-y-1 bg-gray-900 text-white p-3 h-full'>
         {/* タイトル&ロゴエリア */}
         <div className='flex items-center'>
             <div className='mr-3'>
@@ -47,7 +49,19 @@ const Sidebar = () => {
         </div>
 
         {/* チャットタイプエリア */}
-        <div>チャットタイプエリア</div>
+        <div className='space-y-1'>
+            {routes.map((route) => (
+                <Link 
+                href={route.href} 
+                key={route.href}
+                className='block p-3 text-sm font-medium text-zinc-400 hover:text-white hover:bg-white/10 transition rounded-lg'>
+                    <div className='flex items-center'>
+                        <route.Icon className={cn("h-5 w-5 mr-3", route.color)}/>
+                        <p>{route.label}</p>
+                    </div>
+                </Link>
+            ))}
+        </div>
 
         {/* チャットルームエリア */}
         <div>チャットルームエリア</div>
