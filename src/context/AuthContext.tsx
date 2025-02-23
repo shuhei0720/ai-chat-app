@@ -1,7 +1,7 @@
 "use client"
 import { auth } from "@/lib/firebase/firebaseClient";
 import { UserInfo } from "firebase/auth";
-import { createContext, ReactNode, useEffect, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
 interface AuthContextState {
   currentUser: UserInfo | null
@@ -29,4 +29,12 @@ useEffect(() => {
       {!isLoading && children}
     </AuthContext.Provider>
   )
+}
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if(context == undefined) {
+    throw new Error("contextはAuthProvider内で取得する必要があります。");
+  }
+  return context;
 }
