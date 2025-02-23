@@ -1,10 +1,16 @@
+"use client"
+
 import React from 'react'
 import BotAvatar from './BotAvatar'
 import { FileImage, FileOutput, FileSearch2, MessageCircle, Speech } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
+import { usePathname } from 'next/navigation'
 
 const Sidebar = () => {
+
+  const pathname = usePathname()
+  console.log(pathname)
 
   const routes = [
     {
@@ -51,10 +57,10 @@ const Sidebar = () => {
         {/* チャットタイプエリア */}
         <div className='space-y-1'>
             {routes.map((route) => (
-                <Link 
-                href={route.href} 
+                <Link
+                href={route.href}
                 key={route.href}
-                className='block p-3 text-sm font-medium text-zinc-400 hover:text-white hover:bg-white/10 transition rounded-lg'>
+                className={cn('block p-3 text-sm font-medium text-zinc-400 hover:text-white hover:bg-white/10 transition rounded-lg', pathname.startsWith(route.href) && "bg-white/10")}>
                     <div className='flex items-center'>
                         <route.Icon className={cn("h-5 w-5 mr-3", route.color)}/>
                         <p>{route.label}</p>
