@@ -7,8 +7,17 @@ import { Button } from '@/components/ui/button'
 import { Send } from 'lucide-react'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { db } from '@/lib/firebase/firebaseClient'
+import { useAuth } from '@/context/AuthContext'
 
-const ChatForm = () => {
+interface ChatFormProps {
+  chatId?: string,
+  chatType: string,
+}
+
+const ChatForm = ({chatId,chatType}) => {
+  const {currentUser} = useAuth();
 
   const conversationSchema = z.object({
     prompt: z.string().min(1,{message: "1文字以上入力してください。"}),
@@ -21,8 +30,23 @@ const ChatForm = () => {
     resolver: zodResolver(conversationSchema),
   })
 
-  const onSubmit = (values: z.infer<typeof conversationSchema>) => {
+  const onSubmit = async(values: z.infer<typeof conversationSchema>) => {
     console.log(values);
+
+    try {
+      if(!chatId) {
+        //初めてメッセージを送信した場合にチャットルームを作成
+        // Add a new document with a generated id.
+        const newChatdocRef = await addDoc(collection(db, "chats"), {
+          first_message: values.prompt,
+          last_updated: serverTimestamp(),
+          type: chatType,
+          user_id: currentUser?.uid,
+        });
+      }
+    } catch(error) {
+      console.error(error);
+    }
   }
   return (
     <div className='bg-white p-3'>

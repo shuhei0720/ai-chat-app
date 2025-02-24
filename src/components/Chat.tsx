@@ -11,7 +11,7 @@ const Chat = ({chatId,chatType}:ChatProps) => {
   return (
     <>
       <ChatMessage chatId={chatId} chatType={chatType}/>
-      <ChatForm />
+      <ChatForm chatId={chatId} chatType={chatType}/>
     </>
   )
 }
