@@ -11,6 +11,7 @@ import { addDoc, collection, doc, serverTimestamp } from 'firebase/firestore'
 import { db } from '@/lib/firebase/firebaseClient'
 import { useAuth } from '@/context/AuthContext'
 import axios from "axios"
+import { useRouter } from 'next/navigation'
 
 interface ChatFormProps {
   chatId?: string,
@@ -18,6 +19,7 @@ interface ChatFormProps {
 }
 
 const ChatForm = ({chatId,chatType}) => {
+  const router = useRouter();
   const {currentUser} = useAuth();
 
   const conversationSchema = z.object({
@@ -36,6 +38,7 @@ const ChatForm = ({chatId,chatType}) => {
 
     try {
       let chatRef;
+      let isNewChat = false;
       if(!chatId) {
         //初めてメッセージを送信した場合にチャットルームを作成
         // Add a new document with a generated id.
@@ -46,6 +49,7 @@ const ChatForm = ({chatId,chatType}) => {
           user_id: currentUser?.uid,
         });
         chatRef = doc(db, "chats", newChatDocRef.id)
+        isNewChat = true;
       } else {
         chatRef = doc(db, "chats", chatId)
       }
@@ -53,6 +57,10 @@ const ChatForm = ({chatId,chatType}) => {
       const response = await axios.post("/api/conversation", {prompt: values.prompt, chatId: chatRef.id});
       console.log(response);
 
+      if(isNewChat) {
+        router.push(`/${chatType}/${chatRef.id}`)
+      }
+      
     } catch(error) {
       console.error(error);
     }
