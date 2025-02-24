@@ -5,11 +5,23 @@ import { Textarea } from '@/components/ui/textarea'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Send } from 'lucide-react'
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 const ChatForm = () => {
-  const form = useForm()
 
-  const onSubmit = (values: any) => {
+  const conversationSchema = z.object({
+    prompt: z.string().min(1,{message: "1文字以上入力してください。"}),
+  })
+
+  const form = useForm<z.infer<typeof conversationSchema>>({
+    defaultValues: {
+      prompt: "",
+    },
+    resolver: zodResolver(conversationSchema),
+  })
+
+  const onSubmit = (values: z.infer<typeof conversationSchema>) => {
     console.log(values);
   }
   return (
