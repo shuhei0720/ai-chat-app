@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import { db } from '@/lib/firebase/firebaseClient'
 import { useAuth } from '@/context/AuthContext'
+import axios from "axios"
 
 interface ChatFormProps {
   chatId?: string,
@@ -44,6 +45,10 @@ const ChatForm = ({chatId,chatType}) => {
           user_id: currentUser?.uid,
         });
       }
+
+      const response = await axios.post("/api/conversation", {prompt: values.prompt});
+      console.log(response);
+
     } catch(error) {
       console.error(error);
     }
