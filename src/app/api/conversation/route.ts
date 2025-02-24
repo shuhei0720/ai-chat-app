@@ -22,7 +22,7 @@ export async function POST(req: Request, res: Response) {
     });
 
     const messagesRef = db.collection('chats').doc(chatId).collection("messages");
-    const snapShot = await messagesRef.get();
+    const snapShot = await messagesRef.orderBy("created_at", "asc").get();
 
     const messages = snapShot.docs.map((doc) => (
       {
@@ -33,18 +33,21 @@ export async function POST(req: Request, res: Response) {
     console.log("messages", messages);
 
     // openAI APIを呼び出してAIの回答を生成
-    // const completion = await openai.chat.completions.create({
-    //   model: "gpt-4o-mini",
-    //   messages: [
-    //     { role: "developer", content: "You are a helpful assistant." },
-    //     {
-    //       role: "user",
-    //       content: "Write a haiku about recursion in programming.",
-    //     },
-    //   ],
-    // });
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: messages,
+    });
+    console.log("AI_RESPONSE", completion.choices[0].message);
+    const aiResponse = completion.choices[0].message.content;
 
     // AIの回答をfirestoreに保存
+    await db.collection("chats").doc(chatId).collection("messages").add({
+      content: aiResponse,
+      created_at: FieldValue.serverTimestamp(),
+      sender: "assistant",
+      type: "text",
+    });
+
 
     return NextResponse.json({ success: "true" });
   } catch (error) {
