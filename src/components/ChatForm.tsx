@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Send } from 'lucide-react'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { addDoc, collection, doc, serverTimestamp } from 'firebase/firestore'
 import { db } from '@/lib/firebase/firebaseClient'
 import { useAuth } from '@/context/AuthContext'
 import axios from "axios"
@@ -35,18 +35,22 @@ const ChatForm = ({chatId,chatType}) => {
     console.log(values);
 
     try {
+      let chatRef;
       if(!chatId) {
         //初めてメッセージを送信した場合にチャットルームを作成
         // Add a new document with a generated id.
-        const newChatdocRef = await addDoc(collection(db, "chats"), {
+        const newChatDocRef = await addDoc(collection(db, "chats"), {
           first_message: values.prompt,
           last_updated: serverTimestamp(),
           type: chatType,
           user_id: currentUser?.uid,
         });
+        chatRef = doc(db, "chats", newChatDocRef.id)
+      } else {
+        chatRef = doc(db, "chats", chatId)
       }
 
-      const response = await axios.post("/api/conversation", {prompt: values.prompt});
+      const response = await axios.post("/api/conversation", {prompt: values.prompt, chatId: chatRef.id});
       console.log(response);
 
     } catch(error) {

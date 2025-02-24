@@ -15,4 +15,4 @@ if(!getApps().length) {
 const db = getFirestore();
 const bucket = getStorage().bucket();
 
-export {db, bucket};
+export { db, bucket };

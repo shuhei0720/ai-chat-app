@@ -13,7 +13,7 @@ export async function POST(req: Request, res: Response) {
       content: prompt,
       created_at: FieldValue.serverTimestamp(),
       sender: 'user',
-      type: 'conversation',
+      type: 'text',
     });
 
     // openAI APIを呼び出してAIの回答を生成
@@ -26,5 +26,4 @@ export async function POST(req: Request, res: Response) {
     return NextResponse.json({error: "サーバー側でエラーが発生しました。"})
   }
 
-  
 }
