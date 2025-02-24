@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Send } from 'lucide-react'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { addDoc, collection, doc, serverTimestamp } from 'firebase/firestore'
+import { addDoc, collection, doc, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase/firebaseClient'
 import { useAuth } from '@/context/AuthContext'
 import axios from "axios"
@@ -58,7 +58,13 @@ const ChatForm = ({chatId,chatType}) => {
       console.log(response);
 
       if(isNewChat) {
+        // 初めてメッセージを送信たい場合
         router.push(`/${chatType}/${chatRef.id}`)
+      } else {
+        // すでにチャットルームにアクセスしている場合
+        await updateDoc(chatRef, {
+          last_updated: serverTimestamp(),
+        });
       }
       
     } catch(error) {
