@@ -43,7 +43,8 @@ const ChatMessage = ({ chatId,chatType}: ChatMessageProps) => {
       setMessages(fetchMessages);
     });
     return () => unsubscribe();
-  }, []);
+  }, [chatId]);
+
   return (
     <>
       {!chatId ? (

@@ -18,7 +18,7 @@ const ChatRoomPage = ({ params }: { params: { chatType: string, chatId: string} 
     return notFound();
   }
   return (
-    <Chat chatId={chatId} chatType={chatType}/>
+    <Chat initialChatId={chatId} chatType={chatType}/>
   )
 };
 

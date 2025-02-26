@@ -16,9 +16,10 @@ import { useRouter } from 'next/navigation'
 interface ChatFormProps {
   chatId?: string,
   chatType: string,
+  setChatId: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
-const ChatForm = ({chatId,chatType}) => {
+const ChatForm = ({chatId,chatType, setChatId}) => {
   const router = useRouter();
   const {currentUser} = useAuth();
 
@@ -50,6 +51,7 @@ const ChatForm = ({chatId,chatType}) => {
         });
         chatRef = doc(db, "chats", newChatDocRef.id)
         isNewChat = true;
+        setChatId(newChatDocRef.id);
       } else {
         chatRef = doc(db, "chats", chatId)
       }
