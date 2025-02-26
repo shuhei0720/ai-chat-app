@@ -43,6 +43,33 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
   })
 
   const isSubmitting = form.formState.isSubmitting;
+  console.log("エラー内容", form.formState.errors);
+
+  const getRequestData = (values: FormData, chatId: string) => {
+    let apiUrl = "";
+    let apiData = {};
+
+    switch(chatType) {
+      case "conversation":
+        apiUrl = "/api/conversation";
+        apiData = {
+          prompt: values.prompt,
+          chatId: chatId,
+        }
+      break;
+      case "image_generation":
+        apiUrl = "/api/image_generation";
+        apiData = {
+          prompt: values.prompt,
+          amount: values.amount,
+          size: values.size,
+          chatId: chatId,
+        }
+      break;
+    }
+
+    return {apiUrl, apiData}
+  }
 
   const onSubmit = async(values: FormData) => {
     console.log(values.amount);
@@ -66,7 +93,10 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
         chatRef = doc(db, "chats", chatId)
       }
 
-      const response = await axios.post("/api/conversation", {prompt: values.prompt, chatId: chatRef.id});
+      const {apiUrl, apiData} = getRequestData(values, chatRef.id);
+      console.log("apiUrl",apiUrl)
+      console.log("apiData",apiData)
+      const response = await axios.post(apiUrl, apiData);
       console.log(response);
 
       if(isNewChat) {
