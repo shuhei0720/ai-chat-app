@@ -12,6 +12,7 @@ import { db } from '@/lib/firebase/firebaseClient'
 import { useAuth } from '@/context/AuthContext'
 import axios from "axios"
 import { useRouter } from 'next/navigation'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 
 interface ChatFormProps {
   chatId?: string,
@@ -83,6 +84,52 @@ const ChatForm = ({chatId,chatType, setChatId}) => {
     <div className='bg-white p-3'>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
+
+          <div className='flex items-center space-x-2'>
+          {/* amount */}
+          <FormField
+            control={form.control}
+            name="amount"
+            render={({ field }) => (
+              <FormItem className='flex-1'>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a verified email to display" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="m@example.com">m@example.com</SelectItem>
+                    <SelectItem value="m@google.com">m@google.com</SelectItem>
+                    <SelectItem value="m@support.com">m@support.com</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )}
+          />
+
+          {/* size */}
+          <FormField
+            control={form.control}
+            name="size"
+            render={({ field }) => (
+              <FormItem className='flex-1'>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a verified email to display" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="m@example.com">m@example.com</SelectItem>
+                    <SelectItem value="m@google.com">m@google.com</SelectItem>
+                    <SelectItem value="m@support.com">m@support.com</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )}
+          />
+          </div>
           <div className='flex items-center space-x-2'>
             <FormField
               control={form.control}
