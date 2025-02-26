@@ -1,3 +1,4 @@
+import { ChatType } from "@/types";
 import { conversationSchema, imageGenerationSchema } from "./validationSchema";
 
 export const amountOptions = [
@@ -43,6 +44,6 @@ const formConfig = {
   image_analysis: {schema: conversationSchema, defaultValue: {prompt: "",}},
 }
 
-export const getFormConfig = (chatType) => {
+export const getFormConfig = (chatType:ChatType) => {
   return formConfig[chatType]
 }
