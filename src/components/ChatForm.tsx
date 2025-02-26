@@ -13,6 +13,7 @@ import { useAuth } from '@/context/AuthContext'
 import axios from "axios"
 import { useRouter } from 'next/navigation'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
+import { amountOptions, sizeOptions } from '@/lib/formConfigurations'
 
 interface ChatFormProps {
   chatId?: string,
@@ -32,7 +33,7 @@ const ChatForm = ({chatId,chatType, setChatId}) => {
     defaultValues: {
       prompt: "",
     },
-    resolver: zodResolver(conversationSchema),
+    // resolver: zodResolver(conversationSchema),
   })
 
   const isSubmitting = form.formState.isSubmitting;
@@ -83,7 +84,7 @@ const ChatForm = ({chatId,chatType, setChatId}) => {
   return (
     <div className='bg-white p-3'>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-4">
 
           <div className='flex items-center space-x-2'>
           {/* amount */}
@@ -99,9 +100,9 @@ const ChatForm = ({chatId,chatType, setChatId}) => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="m@example.com">m@example.com</SelectItem>
-                    <SelectItem value="m@google.com">m@google.com</SelectItem>
-                    <SelectItem value="m@support.com">m@support.com</SelectItem>
+                    {amountOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </FormItem>
@@ -121,9 +122,9 @@ const ChatForm = ({chatId,chatType, setChatId}) => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="m@example.com">m@example.com</SelectItem>
-                    <SelectItem value="m@google.com">m@google.com</SelectItem>
-                    <SelectItem value="m@support.com">m@support.com</SelectItem>
+                    {sizeOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </FormItem>
