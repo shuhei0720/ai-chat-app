@@ -28,18 +28,24 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
   const {currentUser} = useAuth();
 
   const { schema, defaultValue } = getFormConfig(chatType);
-  console.log("shema",schema);
+  console.log("schema",schema);
   console.log("defaultValue",defaultValue);
 
-  const form = useForm<z.infer<typeof conversationSchema>>({
+  type FormData = {
+    prompt: string,
+    amount: string,
+    size: string,
+  }
+
+  const form = useForm<FormData>({
     defaultValues: defaultValue,
     resolver: zodResolver(schema),
   })
 
   const isSubmitting = form.formState.isSubmitting;
 
-  const onSubmit = async(values: z.infer<typeof conversationSchema>) => {
-    console.log(values);
+  const onSubmit = async(values: FormData) => {
+    console.log(values.amount);
 
     try {
       let chatRef;
