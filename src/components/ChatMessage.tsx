@@ -13,6 +13,7 @@ import { db } from "@/lib/firebase/firebaseClient";
 import { TextMessage } from "@/types";
 import UserAvatar from "@/components/UserAvatar";
 import Panel from "@/components/Panel";
+import MessageDisplay from "./MessageDisplay";
 
 interface ChatMessageProps {
   chatId?: string,
@@ -66,7 +67,8 @@ const ChatMessage = ({ chatId,chatType}: ChatMessageProps) => {
             <div>
               {/* メッセージのタイプによってタグを変える */}
               <div className="bg-white p-4 rounded-lg shadow break-all whitespace-pre-wrap">
-                <p>{message.content}</p>
+                {/*<p>{message.content}</p> */}
+                <MessageDisplay content={message.content}/>
               </div>
             </div>
           </div>
