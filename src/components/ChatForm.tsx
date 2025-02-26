@@ -61,7 +61,9 @@ const ChatForm = ({chatId,chatType, setChatId}) => {
 
       if(isNewChat) {
         // 初めてメッセージを送信たい場合
-        router.push(`/${chatType}/${chatRef.id}`)
+        // router.push(`/${chatType}/${chatRef.id}`)
+        window.history.pushState(null, "", `/&{chatType}/${chatRef.id}`);
+
       } else {
         // すでにチャットルームにアクセスしている場合
         await updateDoc(chatRef, {
