@@ -4,7 +4,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/
 import { Textarea } from '@/components/ui/textarea'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
-import { Send } from 'lucide-react'
+import { LoaderCircle, Send } from 'lucide-react'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { addDoc, collection, doc, serverTimestamp, updateDoc } from 'firebase/firestore'
@@ -33,6 +33,8 @@ const ChatForm = ({chatId,chatType, setChatId}) => {
     },
     resolver: zodResolver(conversationSchema),
   })
+
+  const isSubmitting = form.formState.isSubmitting;
 
   const onSubmit = async(values: z.infer<typeof conversationSchema>) => {
     console.log(values);
@@ -73,6 +75,8 @@ const ChatForm = ({chatId,chatType, setChatId}) => {
       
     } catch(error) {
       console.error(error);
+    } finally {
+      form.reset();
     }
   }
   return (
@@ -86,13 +90,17 @@ const ChatForm = ({chatId,chatType, setChatId}) => {
               render={({field}) => (
                 <FormItem className='w-full flex'>
                   <FormControl>
-                    <Textarea {...field} className='bg-slate-200' rows={1}/>
+                    <Textarea disabled={isSubmitting} {...field} className='bg-slate-200' rows={1}/>
                   </FormControl>
                 </FormItem>
               )}
             />
-            <Button variant={"ghost"}>
-              <Send />
+            <Button disabled={isSubmitting} variant={"ghost"}>
+              {isSubmitting ? (
+                <LoaderCircle className='animate-spin'/>
+              ) :(
+                <Send />
+              )}
             </Button>
           </div>
         </form>
