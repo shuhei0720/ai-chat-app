@@ -15,18 +15,21 @@ import { useRouter } from 'next/navigation'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 import { amountOptions, getFormConfig, sizeOptions } from '@/lib/formConfigurations'
 import { conversationSchema, imageGenerationSchema } from '@/lib/validationSchema'
+import { ChatType } from '@/types'
 
 interface ChatFormProps {
   chatId?: string,
-  chatType: string,
+  chatType: ChatType,
   setChatId: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
-const ChatForm = ({chatId,chatType, setChatId}) => {
+const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
   const router = useRouter();
   const {currentUser} = useAuth();
 
   const { schema, defaultValue } = getFormConfig(chatType);
+  console.log("shema",schema);
+  console.log("defaultValue",defaultValue);
 
   const form = useForm<z.infer<typeof conversationSchema>>({
     defaultValues: defaultValue,

@@ -2,10 +2,11 @@
 import React, { useState } from 'react'
 import ChatMessage from '@/components/ChatMessage'
 import ChatForm from '@/components/ChatForm'
+import { ChatType } from '@/types'
 
 interface ChatProps {
   initialChatId?: string,
-  chatType: string,
+  chatType: ChatType,
 }
 
 const Chat = ({initialChatId,chatType}:ChatProps) => {
