@@ -14,6 +14,7 @@ import axios from "axios"
 import { useRouter } from 'next/navigation'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 import { amountOptions, sizeOptions } from '@/lib/formConfigurations'
+import { conversationSchema, imageGenerationSchema } from '@/lib/validationSchema'
 
 interface ChatFormProps {
   chatId?: string,
@@ -25,15 +26,12 @@ const ChatForm = ({chatId,chatType, setChatId}) => {
   const router = useRouter();
   const {currentUser} = useAuth();
 
-  const conversationSchema = z.object({
-    prompt: z.string().min(1,{message: "1文字以上入力してください。"}),
-  })
 
   const form = useForm<z.infer<typeof conversationSchema>>({
     defaultValues: {
       prompt: "",
     },
-    // resolver: zodResolver(conversationSchema),
+    resolver: zodResolver(imageGenerationSchema),
   })
 
   const isSubmitting = form.formState.isSubmitting;
@@ -86,51 +84,54 @@ const ChatForm = ({chatId,chatType, setChatId}) => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-4">
 
-          <div className='flex items-center space-x-2'>
-          {/* amount */}
-          <FormField
-            control={form.control}
-            name="amount"
-            render={({ field }) => (
-              <FormItem className='flex-1'>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a verified email to display" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {amountOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormItem>
-            )}
-          />
-
-          {/* size */}
-          <FormField
-            control={form.control}
-            name="size"
-            render={({ field }) => (
-              <FormItem className='flex-1'>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a verified email to display" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {sizeOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormItem>
-            )}
-          />
-          </div>
+          {chatType == "image_generation" && (
+            <div className='flex items-center space-x-2'>
+            {/* amount */}
+            <FormField
+              control={form.control}
+              name="amount"
+              render={({ field }) => (
+                <FormItem className='flex-1'>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a verified email to display" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {amountOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+  
+            {/* size */}
+            <FormField
+              control={form.control}
+              name="size"
+              render={({ field }) => (
+                <FormItem className='flex-1'>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a verified email to display" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {sizeOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+            </div>
+          )}
+          
           <div className='flex items-center space-x-2'>
             <FormField
               control={form.control}
