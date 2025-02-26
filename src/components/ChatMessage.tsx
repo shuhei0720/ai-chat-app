@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import BotAvatar from "@/components/BotAvatar";
 import {
   collection,
@@ -21,7 +21,12 @@ interface ChatMessageProps {
 
 const ChatMessage = ({ chatId,chatType}: ChatMessageProps) => {
   const [messages, setMessages] = useState<TextMessage[]>([]);
-  console.log(chatId);
+  
+  const endRef = useRef<null | HTMLDivElement>(null);
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  },[messages.length])
 
   useEffect(() => {
     if(!chatId) return
@@ -66,6 +71,7 @@ const ChatMessage = ({ chatId,chatType}: ChatMessageProps) => {
             </div>
           </div>
         ))}
+        <div ref={endRef}></div>
       </div>
       )}
     </>
