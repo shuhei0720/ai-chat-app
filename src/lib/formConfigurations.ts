@@ -1,3 +1,5 @@
+import { conversationSchema, imageGenerationSchema } from "./validationSchema";
+
 export const amountOptions = [
   {
     value: "1",
@@ -31,3 +33,16 @@ export const sizeOptions = [
     label: "1024x1024",
   },
 ];
+
+const formConfig = {
+  conversation: {schema: conversationSchema, defaultValue: {prompt: "",}},
+  image_generation: {schema: imageGenerationSchema, defaultValue: {prompt: "", amount: "1", size: "256x256"}},
+  // 以下は仮
+  text_to_speech: {schema: conversationSchema, defaultValue: {prompt: "",}},
+  speech_to_text: {schema: conversationSchema, defaultValue: {prompt: "",}},
+  image_analysis: {schema: conversationSchema, defaultValue: {prompt: "",}},
+}
+
+export const getFormConfig = (chatType) => {
+  return formConfig[chatType]
+}

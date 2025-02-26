@@ -13,7 +13,7 @@ import { useAuth } from '@/context/AuthContext'
 import axios from "axios"
 import { useRouter } from 'next/navigation'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
-import { amountOptions, sizeOptions } from '@/lib/formConfigurations'
+import { amountOptions, getFormConfig, sizeOptions } from '@/lib/formConfigurations'
 import { conversationSchema, imageGenerationSchema } from '@/lib/validationSchema'
 
 interface ChatFormProps {
@@ -26,12 +26,11 @@ const ChatForm = ({chatId,chatType, setChatId}) => {
   const router = useRouter();
   const {currentUser} = useAuth();
 
+  const { schema, defaultValue } = getFormConfig(chatType);
 
   const form = useForm<z.infer<typeof conversationSchema>>({
-    defaultValues: {
-      prompt: "",
-    },
-    resolver: zodResolver(imageGenerationSchema),
+    defaultValues: defaultValue,
+    resolver: zodResolver(schema),
   })
 
   const isSubmitting = form.formState.isSubmitting;
