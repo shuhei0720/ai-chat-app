@@ -36,13 +36,26 @@ export async function POST(req: Request, res: Response) {
     console.log("response",response);
     console.log("image_url",image_url);
 
+    //URL->ダウンロード->バイナリデータに変換->保存パスを設定->ストレージにアップロード
+    const imageDataPromises = response.data.map(async(item) => {
+      if(item.url) {
+        const response = await fetch(item.url);
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const filePath = `${"er9CONFDWqNlIV6PnhGQbSM0ixl1"}/chatRoom/${chatId}`;
+        return await fileUploadToStorage(buffer, filePath, "image/png");
+      }
+    })
+
+    const urls = await Promise.all(imageDataPromises);
+
     // // AIの回答をfirestoreに保存
-    await db.collection("chats").doc(chatId).collection("messages").add({
-      content: aiResponse,
-      created_at: FieldValue.serverTimestamp(),
-      sender: "assistant",
-      type: "text",
-    });
+    // await db.collection("chats").doc(chatId).collection("messages").add({
+    //   content: aiResponse,
+    //   created_at: FieldValue.serverTimestamp(),
+    //   sender: "assistant",
+    //   type: "text",
+    // });
 
 
     return NextResponse.json({ success: "true" });
