@@ -67,8 +67,8 @@ const ChatMessage = ({ chatId,chatType}: ChatMessageProps) => {
             <div>
               {/* メッセージのタイプによってタグを変える */}
               <div className="bg-white p-4 rounded-lg shadow break-all whitespace-pre-wrap">
-                {/*<p>{message.content}</p> */}
-                <MessageDisplay content={message.content}/>
+                <p>{message.content}</p>
+                {/* <MessageDisplay content={message.content}/> */}
               </div>
             </div>
           </div>

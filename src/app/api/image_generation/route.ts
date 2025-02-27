@@ -1,4 +1,5 @@
 import { db } from "@/lib/firebase/firebaseAdmin";
+import { fileUploadToStorage } from "@/lib/firebase/storage";
 import { FieldValue } from "firebase-admin/firestore";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
@@ -34,7 +35,7 @@ export async function POST(req: Request, res: Response) {
     
     const image_url = response.data[0].url;
     console.log("response",response);
-    console.log("image_url",image_url);
+    // console.log("image_url",image_url);
 
     //URL->ダウンロード->バイナリデータに変換->保存パスを設定->ストレージにアップロード
     const imageDataPromises = response.data.map(async(item) => {
@@ -45,17 +46,18 @@ export async function POST(req: Request, res: Response) {
         const filePath = `${"er9CONFDWqNlIV6PnhGQbSM0ixl1"}/chatRoom/${chatId}`;
         return await fileUploadToStorage(buffer, filePath, "image/png");
       }
-    })
+    });
 
     const urls = await Promise.all(imageDataPromises);
+    console.log("urls",urls);
 
     // // AIの回答をfirestoreに保存
-    // await db.collection("chats").doc(chatId).collection("messages").add({
-    //   content: aiResponse,
-    //   created_at: FieldValue.serverTimestamp(),
-    //   sender: "assistant",
-    //   type: "text",
-    // });
+    await db.collection("chats").doc(chatId).collection("messages").add({
+      content: urls,
+      created_at: FieldValue.serverTimestamp(),
+      sender: "assistant",
+      type: "text",
+    });
 
 
     return NextResponse.json({ success: "true" });

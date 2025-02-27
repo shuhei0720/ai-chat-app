@@ -7,9 +7,9 @@ export const fileUploadToStorage = async(
   contentType: string,
 ) => {
   try {
-    const fileExtention = contentType === "audio/mpeg" ? "mp3" : contentType.split("/")[1];
+    const fileExtension = contentType === "audio/mpeg" ? "mp3" : contentType.split("/")[1];
     const randomFileName = uuidv4();
-    const fileName = `${filePath}/${randomFileName}.${fileExtention}`;
+    const fileName = `${filePath}/${randomFileName}.${fileExtension}`;
     const uploadFile = bucket.file(fileName);
 
     await uploadFile.save(buffer, {
@@ -19,7 +19,7 @@ export const fileUploadToStorage = async(
     });
 
     await uploadFile.makePublic();
-    return `https://storage.googoleapis.com/${bucket.name/fileName}`;
+    return `https://storage.googleapis.com/${bucket.name}/${fileName}`;
   } catch (error: any) {
     console.log(error);
     throw new Error("ファイルのアップロードに失敗しました。", error.message);

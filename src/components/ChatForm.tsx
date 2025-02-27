@@ -102,7 +102,7 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
       if(isNewChat) {
         // 初めてメッセージを送信たい場合
         // router.push(`/${chatType}/${chatRef.id}`)
-        window.history.pushState(null, "", `/&{chatType}/${chatRef.id}`);
+        window.history.pushState(null, "", `/${chatType}/${chatRef.id}`);
 
       } else {
         // すでにチャットルームにアクセスしている場合
