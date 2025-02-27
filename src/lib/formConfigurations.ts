@@ -30,7 +30,7 @@ export const sizeOptions = [
     label: "512x512",
   },
   {
-    value: "1024x10243",
+    value: "1024x1024",
     label: "1024x1024",
   },
 ];
