@@ -13,7 +13,7 @@ import { useAuth } from '@/context/AuthContext'
 import axios from "axios"
 import { useRouter } from 'next/navigation'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
-import { amountOptions, getFormConfig, getRequestData, sizeOptions } from '@/lib/formConfigurations'
+import { amountOptions, getFormConfig, getRequestData, selectFirstMessage, sizeOptions } from '@/lib/formConfigurations'
 import { conversationSchema, imageGenerationSchema } from '@/lib/validationSchema'
 import { ChatFormData, ChatType } from '@/types'
 import { Input } from './ui/input'
@@ -56,15 +56,6 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
       const newFiles = Array.from(files)
       console.log(newFiles);
       form.setValue("files", newFiles);
-    }
-  }
-
-  const selectFirstMessage = (values:ChatFormData, chatType:string) => {
-    switch(chatType) {
-      case "speech_to_text":
-        return values.file.name;
-      default:
-        return values.prompt;
     }
   }
 

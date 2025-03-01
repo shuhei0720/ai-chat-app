@@ -87,4 +87,15 @@ export const getRequestData = (values: ChatFormData, chatId: string, chatType: C
   }
 
   return {apiUrl, apiData}
-}
+};
+
+export const selectFirstMessage = (values:ChatFormData, chatType:ChatType) => {
+  switch(chatType) {
+    case "speech_to_text":
+      return values.file.name;
+    case "image_analysis":
+      return values.prompt ? values.prompt : "ファイルを解析してください。";
+    default:
+      return values.prompt;
+  }
+};
