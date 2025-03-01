@@ -112,5 +112,6 @@ export const imageAnalysisSchema = z.object({
     }).optional()
 
 }).refine((data) => data.prompt || (data.files && data.files?.length > 0), {
-  message: "promptまたはfilesのどちらか一方は必須です。"
+  message: "promptまたはfilesのどちらか一方は必須です。",
+  path:["prompt", "files"],
 })

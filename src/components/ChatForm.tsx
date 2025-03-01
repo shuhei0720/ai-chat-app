@@ -121,9 +121,19 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
     }
   };
 
+  const files = form.watch("files");
+  console.log("ReactHookFormで管理している値", files)
+
   const handleFileRemove = (index: number) => {
+    if(fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
     setImageUrls((prevImageUrls) => prevImageUrls.filter((_, idx) => idx !== index));
-    
+    if(files) {
+      const updatedFiles = files.filter((_, idx) => idx !== index);
+      console.log(updatedFiles);
+      form.setValue("files", updatedFiles);
+    }
   }
 
   const FilePreview = () => (
