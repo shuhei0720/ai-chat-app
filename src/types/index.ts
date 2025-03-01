@@ -5,6 +5,7 @@ export type ChatFormData = {
   amount: string;
   size: string;
   file: File;
+  files: File[];
 }
 
 export type ChatType = 

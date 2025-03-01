@@ -48,9 +48,15 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
   const handleFileChange = (files:FileList | null) => {
     console.log(files);
     if(!files || files.length === 0) return;
-    const file = files[0];
-    form.setValue("file", file);
-    setAudio(file);
+    if(chatType === "speech_to_text") {
+      const file = files[0];
+      form.setValue("file", file);
+      setAudio(file);
+    } else if(chatType === "image_analysis") {
+      const newFiles = Array.from(files)
+      console.log(newFiles);
+      form.setValue("files", newFiles);
+    }
   }
 
   const selectFirstMessage = (values:ChatFormData, chatType:string) => {
@@ -187,12 +193,13 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
           {(chatType === "speech_to_text" || chatType === "image_analysis") && (
             <FormField
               control={form.control}
-              name="file"
+              name={chatType === "speech_to_text" ? "file" : "files"}
               render={({ field: {value, ref, onChange, ...fieldProps} }) => (
                 <FormItem>
                   <FormLabel><Paperclip /></FormLabel>
                   <FormControl>
                     <Input
+                      multiple={chatType === "image_analysis"}
                       ref={(e) => {
                         fileInputRef.current = e;
                         ref(e);
