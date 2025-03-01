@@ -121,6 +121,11 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
     }
   };
 
+  const handleFileRemove = (index: number) => {
+    setImageUrls((prevImageUrls) => prevImageUrls.filter((_, idx) => idx !== index));
+    
+  }
+
   const FilePreview = () => (
     <div className="flex flex-wrap gap-2 mb-4">
       {/* speech_to_textの場合 */}
@@ -144,7 +149,7 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
             />
             {!isSubmitting && (
               <button
-                // onClick={() => handleFileRemove(index)}
+                onClick={() => handleFileRemove(index)}
                 className="absolute -top-2 -right-2 p-1 text-white bg-black bg-opacity-75 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <Trash2 size={12} />
