@@ -56,13 +56,13 @@ export async function POST(req: Request, res: Response) {
       content: urls,
       created_at: FieldValue.serverTimestamp(),
       sender: "assistant",
-      type: "text",
+      type: "image",
     });
 
 
     return NextResponse.json({ success: "true" });
   } catch (error) {
-    console.log("CONVERSATION_ERROR", error);
+    console.log("IMAGE_GENERATION_ERROR", error);
     return NextResponse.json({ error: "サーバー側でエラーが発生しました。" });
   }
 }

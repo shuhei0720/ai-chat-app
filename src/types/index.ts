@@ -18,7 +18,17 @@ export interface ChatRoom {
 export interface TextMessage {
     id: string;
     content: string;
-    type: string;
+    type: "text";
     created_at: Timestamp;
     sender: "user" | "assistant";
 }
+
+export interface ImageMessage {
+  id: string;
+  content: string[];
+  type: "image";
+  created_at: Timestamp;
+  sender: "user" | "assistant";
+}
+
+export type Message = TextMessage | ImageMessage;
