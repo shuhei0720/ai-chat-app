@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     const filePath = `${"er9CONFDWqNlIV6PnhGQbSM0ixl1"}/chatRoom/${chatId}`;
-    const url = await fileUploadToStorage(buffer, filePath, "audio/mpeg");
+    const url = await fileUploadToStorage(buffer, filePath, file.type);
     console.log("url",url);
 
     // ユーザーメッセージをfirestoreに保存
