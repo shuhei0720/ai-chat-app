@@ -17,6 +17,7 @@ const LoginPage = () => {
   },[currentUser]);
 
   const handleLogin = () => {
+    provider.setCustomParameters({ prompt: 'select_account' }); //ユーザーにアカウント選択を促す
     signInWithPopup(auth,provider).then(() => {
       // router.push("/conversation");
     }).catch((error) => {

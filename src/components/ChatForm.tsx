@@ -70,7 +70,9 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
       console.log(imageUrls);
       setImageUrls((prevImageUrls) => [...prevImageUrls, ...imageUrls]);
 
-      form.setValue("files", newFiles);
+      const updatedFiles = form.getValues("files") || [];
+
+      form.setValue("files", [...updatedFiles, ...newFiles]);
     }
   }
 
