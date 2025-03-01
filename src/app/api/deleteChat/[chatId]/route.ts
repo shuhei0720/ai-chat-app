@@ -1,7 +1,7 @@
 import { bucket, db } from "@/lib/firebase/firebaseAdmin";
 import { NextResponse } from "next/server"
 
-export async function DELETE(req:Request, res:Response, {params}: {params: {chatId: string}}) {
+export async function DELETE(req:Request, {params}: {params: {chatId: string}}) {
   try {
     const {chatId} = params
     // firestoreからデータを削除する処理
@@ -19,6 +19,10 @@ export async function DELETE(req:Request, res:Response, {params}: {params: {chat
     } else {
       console.log(`削除対象のファイルはありませんでした。`);
     }
+    return NextResponse.json(
+      {message: "チャットルームとそのサブコレクションが削除されました。"},
+      {status: 200}
+    )
   } catch(error) {
     console.log("削除処理中のエラー",error)
     return NextResponse.json({error: "削除処理中のエラーが発生しました。"},{status: 500})

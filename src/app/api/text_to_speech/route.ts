@@ -8,7 +8,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-export async function POST(req: Request, res: Response) {
+export async function POST(req: Request) {
   try {
     const { prompt, chatId } = await req.json();
     console.log(prompt);

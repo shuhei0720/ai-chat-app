@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { collection, onSnapshot, orderBy, query, Timestamp, where } from "firebase/firestore";
 import { db } from "@/lib/firebase/firebaseClient";
@@ -21,6 +21,7 @@ import { ChatRoom } from "@/types";
 import axios from "axios";
 
 const Sidebar = () => {
+  const router = useRouter();
   const[chatRooms,setChatRooms] = useState<ChatRoom[]>([]);
   const pathname = usePathname();
   const {currentUser} = useAuth();
@@ -86,8 +87,9 @@ const Sidebar = () => {
 
   const handleDeleteChat = async(chatId: string) => {
     try {
-      const response = await axios.delete(`api/deleteChat/${chatId}`)
+      const response = await axios.delete(`/api/deleteChat/${chatId}`)
       console.log("response",response);
+      router.push("/conversation");
     } catch(error) {
       console.error(error)
     }
