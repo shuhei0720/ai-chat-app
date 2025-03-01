@@ -1,9 +1,10 @@
 import { Timestamp } from "firebase/firestore";
 
 export type ChatFormData = {
-  prompt: string,
-  amount: string,
-  size: string,
+  prompt: string;
+  amount: string;
+  size: string;
+  file: File;
 }
 
 export type ChatType = 

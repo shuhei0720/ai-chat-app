@@ -147,11 +147,11 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
           <FormField
             control={form.control}
             name="file"
-            render={({ field }) => (
+            render={({ field: {value, ...fieldProps} }) => (
               <FormItem>
                 <FormLabel><Paperclip /></FormLabel>
                 <FormControl>
-                  <Input className="hidden" type="file" placeholder="shadcn" {...field} />
+                  <Input className="hidden" type="file" placeholder="shadcn" {...fieldProps} />
                 </FormControl>
               </FormItem>
             )}
