@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form'
 import { Textarea } from '@/components/ui/textarea'
 import { useForm } from 'react-hook-form'
@@ -17,6 +17,7 @@ import { amountOptions, getFormConfig, getRequestData, sizeOptions } from '@/lib
 import { conversationSchema, imageGenerationSchema } from '@/lib/validationSchema'
 import { ChatFormData, ChatType } from '@/types'
 import { Input } from './ui/input'
+import Image from 'next/image'
 
 interface ChatFormProps {
   chatId?: string,
@@ -25,6 +26,7 @@ interface ChatFormProps {
 }
 
 const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
+  const[audio,setAudio] = useState<File | null>(null);
   const router = useRouter();
   const {currentUser} = useAuth();
 
@@ -46,6 +48,7 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
     if(!files || files.length === 0) return;
     const file = files[0];
     form.setValue("file", file);
+    setAudio(file);
   }
 
   const selectFirstMessage = (values:ChatFormData, chatType:string) => {
@@ -103,8 +106,24 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
       form.reset();
     }
   };
+
+  const FilePreview = () => (
+    <div className="flex flex-wrap gap-2 mb-4">
+        {audio && (
+        <div className="flex items-center gap-2 p-4 rounded-lg">
+            <div className="relative h-10 w-10">
+                <Image src={"/audio_file.svg"} fill alt="audio_file" />
+            </div>
+            <p>{audio.name}</p>
+        </div>
+        )}
+    </div>
+  )
   return (
     <div className='bg-white p-3'>
+      {audio && (
+        <FilePreview />
+      )}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-4">
 
