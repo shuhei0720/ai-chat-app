@@ -2,6 +2,20 @@ import { z } from "zod";
 
 const MAX_AUDIO_FILE_SIZE = 1024 * 1024 * 20; //20MB
 
+// flac, mp3, mp4, mpeg, mpga, m4a, ogg, wav, webm
+const ACCEPTED_AUDIO_FORMATS = [
+  "audio/flac",
+  "audio/mpeg",
+  "video/mp4",
+  "audio/mp4",
+  "video/mpeg",
+  "audio/aac",
+  "audio/ogg",
+  "audio/vnd.wav",
+  "audio/wav",
+  "video/webm",
+]
+
 export const conversationSchema = z.object({
   prompt: z.string().min(1,{message: "1文字以上入力してください。"}),
 })
@@ -30,5 +44,12 @@ export const speechToTextSchema = z.object({
       message: "20MB以下のファイルを選択してください。"
     })
     //ファイルの形式
+    .refine((file) => {
+      const fileTypeValid = ACCEPTED_AUDIO_FORMATS.includes(file.type);
+      return fileTypeValid;
+    },{
+      message: "タイプです。"
+    })
+
 
 })
