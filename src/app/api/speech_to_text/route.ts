@@ -11,18 +11,25 @@ const openai = new OpenAI({
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
-    const file = formData.get("file");
-    const chatId = formData.get("chatId");
+    const file = formData.get("file") as File;
+    const chatId = formData.get("chatId") as string;
     console.log(file);
     console.log(chatId);
 
+    //バイナリデータに変換->保存パスを設定->ストレージにアップロードして参照URLを取得
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const filePath = `${"er9CONFDWqNlIV6PnhGQbSM0ixl1"}/chatRoom/${chatId}`;
+    const url = await fileUploadToStorage(buffer, filePath, "audio/mpeg");
+    console.log("url",url);
+
     // ユーザーメッセージをfirestoreに保存
-    // await db.collection("chats").doc(chatId).collection("messages").add({
-    //   content: prompt,
-    //   created_at: FieldValue.serverTimestamp(),
-    //   sender: "user",
-    //   type: "text",
-    // });
+    await db.collection("chats").doc(chatId).collection("messages").add({
+      content: url,
+      created_at: FieldValue.serverTimestamp(),
+      sender: "user",
+      type: "audio",
+    });
 
     // openAI APIを呼び出してAIの回答を生成
     // const audioResponse = await openai.audio.speech.create({
@@ -31,13 +38,6 @@ export async function POST(req: Request) {
     //   input: prompt,
     // });
     // console.log("audioResponse",audioResponse);
-
-    //バイナリデータに変換->保存パスを設定->ストレージにアップロードして参照URLを取得
-        // const arrayBuffer = await audioResponse.arrayBuffer();
-        // const buffer = Buffer.from(arrayBuffer);
-        // const filePath = `${"er9CONFDWqNlIV6PnhGQbSM0ixl1"}/chatRoom/${chatId}`;
-        // const url = await fileUploadToStorage(buffer, filePath, "audio/mpeg");
-        // console.log("url",url);
 
     // // AIの回答をfirestoreに保存
     // await db.collection("chats").doc(chatId).collection("messages").add({
