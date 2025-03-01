@@ -46,26 +46,39 @@ export async function POST(req: Request) {
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
+        // ユーザーメッセージ
         {
           role: "user",
           content: [
             // テキスト
             { type: "text", text: prompt },
             // 画像
-            ...urls.map((url) => (
-              {
-                type: "image_url" as "image_url",
-                image_url: {
-                  "url": url
-                },
-              }
-            ))
-            // {
-            //   type: "image_url",
-            //   image_url: {
-            //     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
-            //   },
-            // },
+            {
+              type: "image_url",
+              image_url: {
+                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
+              },
+            },
+          ],
+        },
+        // AIメッセージ
+        {
+          role: "assistant",
+          content:"写真には犬が映っています。"
+        },
+        // ユーザーメッセージ
+        {
+          role: "user",
+          content: [
+            // テキスト
+            { type: "text", text: prompt },
+            // 画像
+            {
+              type: "image_url",
+              image_url: {
+                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
+              },
+            },
           ],
         },
       ],
