@@ -15,40 +15,35 @@ export async function POST(req: Request, res: Response) {
     console.log(chatId);
 
     // ユーザーメッセージをfirestoreに保存
-    // Add a new document with a generated id.
-    // await db.collection("chats").doc(chatId).collection("messages").add({
-    //   content: prompt,
-    //   created_at: FieldValue.serverTimestamp(),
-    //   sender: "user",
-    //   type: "text",
-    // });
+    await db.collection("chats").doc(chatId).collection("messages").add({
+      content: prompt,
+      created_at: FieldValue.serverTimestamp(),
+      sender: "user",
+      type: "text",
+    });
 
     // openAI APIを呼び出してAIの回答を生成
-    const mp3 = await openai.audio.speech.create({
+    const audioResponse = await openai.audio.speech.create({
       model: "tts-1-hd",
       voice: "alloy",
       input: prompt,
     });
-    console.log("mp3",mp3);
+    console.log("audioResponse",audioResponse);
 
-    //URL->ダウンロード->バイナリデータに変換->保存パスを設定->ストレージにアップロード
-    const imageDataPromises = response.data.map(async(item) => {
-      if(item.url) {
-        const response = await fetch(item.url);
-        const arrayBuffer = await response.arrayBuffer();
+    //バイナリデータに変換->保存パスを設定->ストレージにアップロードして参照URLを取得
+        const arrayBuffer = await audioResponse.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
         const filePath = `${"er9CONFDWqNlIV6PnhGQbSM0ixl1"}/chatRoom/${chatId}`;
-        return await fileUploadToStorage(buffer, filePath, "image/png");
-      }
-    });
+        const url = await fileUploadToStorage(buffer, filePath, "audio/mpeg");
+        console.log("url",url);
 
     // // AIの回答をfirestoreに保存
-    // await db.collection("chats").doc(chatId).collection("messages").add({
-    //   content: urls,
-    //   created_at: FieldValue.serverTimestamp(),
-    //   sender: "assistant",
-    //   type: "image",
-    // });
+    await db.collection("chats").doc(chatId).collection("messages").add({
+      content: url,
+      created_at: FieldValue.serverTimestamp(),
+      sender: "assistant",
+      type: "audio",
+    });
 
 
     return NextResponse.json({ success: "true" });
