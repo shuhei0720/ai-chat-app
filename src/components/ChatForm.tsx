@@ -4,7 +4,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/
 import { Textarea } from '@/components/ui/textarea'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
-import { LoaderCircle, Paperclip, Send } from 'lucide-react'
+import { LoaderCircle, Paperclip, Send, Trash2 } from 'lucide-react'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { addDoc, collection, doc, serverTimestamp, updateDoc } from 'firebase/firestore'
@@ -29,6 +29,7 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   console.log(fileInputRef.current?.value);
   const[audio,setAudio] = useState<File | null>(null);
+  const[imageUrls, setImageUrls] = useState<string[]>([]);
   const router = useRouter();
   const {currentUser} = useAuth();
 
@@ -55,6 +56,14 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
     } else if(chatType === "image_analysis") {
       const newFiles = Array.from(files)
       console.log(newFiles);
+
+      const imageUrls = newFiles.map((file) => {
+        return URL.createObjectURL(file);
+      })
+
+      console.log(imageUrls);
+      setImageUrls((prevImageUrls) => [...prevImageUrls, ...imageUrls]);
+
       form.setValue("files", newFiles);
     }
   }
@@ -114,21 +123,40 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
 
   const FilePreview = () => (
     <div className="flex flex-wrap gap-2 mb-4">
-        {audio && (
+      {/* speech_to_textの場合 */}
+      {audio && (
         <div className="flex items-center gap-2 p-4 rounded-lg">
-            <div className="relative h-10 w-10">
-                <Image src={"/audio_file.svg"} fill alt="audio_file" />
-            </div>
-            <p>{audio.name}</p>
+          <div className="relative h-10 w-10">
+            <Image src={"/audio_file.svg"} fill alt="audio_file" />
+          </div>
+          <p>{audio.name}</p>
         </div>
-        )}
+      )}
+      {/* image_analysisの場合 */}
+      {imageUrls.length > 0 &&
+        imageUrls.map((imageUrl, index) => (
+          <div key={index} className="relative group w-12 h-12">
+            <Image
+              src={imageUrl}
+              alt="File preview"
+              fill
+              className="rounded object-cover"
+            />
+            {!isSubmitting && (
+              <button
+                // onClick={() => handleFileRemove(index)}
+                className="absolute -top-2 -right-2 p-1 text-white bg-black bg-opacity-75 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <Trash2 size={12} />
+              </button>
+            )}
+          </div>
+        ))}
     </div>
-  )
+  );
   return (
     <div className='bg-white p-3'>
-      {audio && (
-        <FilePreview />
-      )}
+      {(audio || imageUrls.length > 0) && <FilePreview />}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-4">
 
