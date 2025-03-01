@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 const MAX_AUDIO_FILE_SIZE = 1024 * 1024 * 20; //20MB
+const MAX_IMAGE_FILE_SIZE = 1024 * 1024 * 20; //20MB
 
 // flac, mp3, mp4, mpeg, mpga, m4a, ogg, wav, webm
 const ACCEPTED_AUDIO_FORMATS = [
@@ -101,9 +102,15 @@ export const imageAnalysisSchema = z.object({
         message: "対応していないファイルタイプです。"
       })
     )
-    //最大サイズ
-    .refine((file) => file.size <= MAX_AUDIO_FILE_SIZE, {
-      message: "20MB以下のファイルを選択してください。"
-    })
 
+    //最大サイズ
+    .refine((files) => {
+      const totalFileSize = files.reduce((acc, file) => acc + file.size, 0);
+      return totalFileSize <= MAX_IMAGE_FILE_SIZE
+    }, {
+      message: "20MB以下のファイルを選択してください。"
+    }).optional()
+
+}).refine((data) => data.prompt || (data.files && data.files?.length > 0), {
+  message: "promptまたはfilesのどちらか一方は必須です。"
 })
