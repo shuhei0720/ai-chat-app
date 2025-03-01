@@ -18,6 +18,7 @@ import TextMessageComponent from "./TextMessageComponent";
 import ImageMessageComponent from "./ImageMessageComponent";
 import { cn } from "@/lib/utils";
 import AudioMessageComponent from "./AudioMessageComponent";
+import ImageAnalysisMessageComponent from "./ImageAnalysisMessageComponent";
 
 interface ChatMessageProps {
   chatId?: string,
@@ -65,6 +66,9 @@ const ChatMessage = ({ chatId,chatType}: ChatMessageProps) => {
 
       case "audio":
       return <AudioMessageComponent src={message.content}/>;
+
+      case "image_analysis":
+      return <ImageAnalysisMessageComponent content={message.content}/>;
     }
   };
 
@@ -81,9 +85,9 @@ const ChatMessage = ({ chatId,chatType}: ChatMessageProps) => {
             ) : (
               <BotAvatar />
             )}
-            <div className={cn(message.type === "image" ? "flex-1" : "")}>
+            <div className={cn(message.type === "image" || message.type === "image_analysis" ? "flex-1" : "")}>
               {/* メッセージのタイプによってタグを変える */}
-              <div>{getMessageComponent(message)}</div>
+              {getMessageComponent(message)}
             </div>
           </div>
         ))}

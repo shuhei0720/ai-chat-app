@@ -47,4 +47,12 @@ export interface AudioMessage {
   sender: "user" | "assistant";
 }
 
-export type Message = TextMessage | ImageMessage | AudioMessage;
+export interface ImageAnalysisMessage {
+  id: string;
+  content: { imageUrl: string[], text: string };
+  type: "image_analysis";
+  created_at: Timestamp;
+  sender: "user" | "assistant";
+}
+
+export type Message = TextMessage | ImageMessage | AudioMessage | ImageAnalysisMessage;
