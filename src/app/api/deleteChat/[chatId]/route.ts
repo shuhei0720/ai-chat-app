@@ -1,4 +1,4 @@
-import { db } from "@/lib/firebase/firebaseAdmin";
+import { bucket, db } from "@/lib/firebase/firebaseAdmin";
 import { NextResponse } from "next/server"
 
 export async function DELETE(req:Request, res:Response, {params}: {params: {chatId: string}}) {
@@ -7,7 +7,18 @@ export async function DELETE(req:Request, res:Response, {params}: {params: {chat
     // firestoreからデータを削除する処理
     const chatRef = db.collection("chats").doc(chatId);
     await db.recursiveDelete(chatRef);
+
     // storageからデータを削除する処理
+    const prefix = `${"er9CONFDWqNlIV6PnhGQbSM0ixl1"}/chatRoom/${chatId}`;
+    const [files] = await bucket.getFiles({prefix: prefix});
+    if(files) {
+      console.log(`${files.length}枚の削除対象のファイルがありました。`)
+      const deletePromises = files.map((file) => file.delete());
+      await Promise.all(deletePromises);
+      console.log(`${files.length}枚のファイルを削除しました。`);
+    } else {
+      console.log(`削除対象のファイルはありませんでした。`);
+    }
   } catch(error) {
     console.log("削除処理中のエラー",error)
     return NextResponse.json({error: "削除処理中のエラーが発生しました。"},{status: 500})
