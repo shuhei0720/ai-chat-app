@@ -57,10 +57,10 @@ const ChatMessage = ({ chatId,chatType}: ChatMessageProps) => {
   const getMessageComponent = (message:Message) => {
     switch(message.type) {
       case "text":
-      return <TextMessageComponent content={message.content}/>
+      return <TextMessageComponent content={message.content}/>;
 
       case "image":
-      return <ImageMessageComponent images={message.content}/>
+      return <ImageMessageComponent images={message.content}/>;
     }
   };
 
