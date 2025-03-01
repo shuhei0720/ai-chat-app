@@ -46,7 +46,7 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
 
   const form = useForm<ChatFormData>({
     defaultValues: defaultValue,
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema as any),
   })
 
   const isSubmitting = form.formState.isSubmitting;
