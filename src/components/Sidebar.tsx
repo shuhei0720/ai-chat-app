@@ -18,6 +18,7 @@ import { collection, onSnapshot, orderBy, query, Timestamp, where } from "fireba
 import { db } from "@/lib/firebase/firebaseClient";
 import { useAuth } from "@/context/AuthContext";
 import { ChatRoom } from "@/types";
+import axios from "axios";
 
 const Sidebar = () => {
   const[chatRooms,setChatRooms] = useState<ChatRoom[]>([]);
@@ -82,6 +83,15 @@ const Sidebar = () => {
       Icon: FileSearch2,
     },
   ];
+
+  const handleDeleteChat = async(chatId: string) => {
+    try {
+      const response = await axios.delete(`api/deleteChat/${chatId}`)
+      console.log("response",response);
+    } catch(error) {
+      console.error(error)
+    }
+  }
   return (
     <div className="space-y-4 bg-gray-900 text-white p-3 h-full flex flex-col">
       {/* タイトル&ロゴエリア */}
@@ -130,7 +140,7 @@ const Sidebar = () => {
                     <Ellipsis size={16} />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem>削除</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleDeleteChat(room.id)}>削除</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
