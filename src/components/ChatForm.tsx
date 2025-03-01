@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form'
 import { Textarea } from '@/components/ui/textarea'
 import { useForm } from 'react-hook-form'
@@ -26,6 +26,8 @@ interface ChatFormProps {
 }
 
 const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  console.log(fileInputRef.current?.value);
   const[audio,setAudio] = useState<File | null>(null);
   const router = useRouter();
   const {currentUser} = useAuth();
@@ -103,6 +105,12 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
     } catch(error) {
       console.error(error);
     } finally {
+      if(fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      if(chatType === "speech_to_text") {
+        setAudio(null);
+      }
       form.reset();
     }
   };
@@ -176,29 +184,35 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
           )}
           
           <div className='flex items-center space-x-2'>
-
-          {/* ファイル */}
-          <FormField
-            control={form.control}
-            name="file"
-            render={({ field: {value, onChange, ...fieldProps} }) => (
-              <FormItem>
-                <FormLabel><Paperclip /></FormLabel>
-                <FormControl>
-                  <Input 
-                    className="hidden"
-                    type="file"
-                    onChange={(event) => {
-                      const files = event.target.files;
-                      console.log(files);
-                      handleFileChange(files);
-                    }}
-                    {...fieldProps}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+          {(chatType === "speech_to_text" || chatType === "image_analysis") && (
+            <FormField
+              control={form.control}
+              name="file"
+              render={({ field: {value, ref, onChange, ...fieldProps} }) => (
+                <FormItem>
+                  <FormLabel><Paperclip /></FormLabel>
+                  <FormControl>
+                    <Input
+                      ref={(e) => {
+                        fileInputRef.current = e;
+                        ref(e);
+                      }}
+                      // ref={fileInputRef}
+                      className="hidden"
+                      type="file"
+                      onChange={(event) => {
+                        const files = event.target.files;
+                        console.log(files);
+                        handleFileChange(files);
+                      }}
+                      {...fieldProps}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          )}
+          
 
             <FormField
               control={form.control}

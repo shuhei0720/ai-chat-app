@@ -32,20 +32,22 @@ export async function POST(req: Request) {
     });
 
     // openAI APIを呼び出してAIの回答を生成
-    // const audioResponse = await openai.audio.speech.create({
-    //   model: "tts-1-hd",
-    //   voice: "alloy",
-    //   input: prompt,
-    // });
-    // console.log("audioResponse",audioResponse);
+    const transcription = await openai.audio.transcriptions.create({
+      file: file,
+      model: "whisper-1",
+    });
+    
+    console.log("transcription",transcription);
+    console.log("transcription.text",transcription.text);
+    const aiResponse = transcription.text;
 
     // // AIの回答をfirestoreに保存
-    // await db.collection("chats").doc(chatId).collection("messages").add({
-    //   content: url,
-    //   created_at: FieldValue.serverTimestamp(),
-    //   sender: "assistant",
-    //   type: "audio",
-    // });
+    await db.collection("chats").doc(chatId).collection("messages").add({
+      content: aiResponse,
+      created_at: FieldValue.serverTimestamp(),
+      sender: "assistant",
+      type: "text",
+    });
 
 
     return NextResponse.json({ success: "true" });
