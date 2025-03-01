@@ -13,9 +13,9 @@ import { useAuth } from '@/context/AuthContext'
 import axios from "axios"
 import { useRouter } from 'next/navigation'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
-import { amountOptions, getFormConfig, sizeOptions } from '@/lib/formConfigurations'
+import { amountOptions, getFormConfig, getRequestData, sizeOptions } from '@/lib/formConfigurations'
 import { conversationSchema, imageGenerationSchema } from '@/lib/validationSchema'
-import { ChatType } from '@/types'
+import { ChatFormData, ChatType } from '@/types'
 
 interface ChatFormProps {
   chatId?: string,
@@ -31,13 +31,8 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
   console.log("schema",schema);
   console.log("defaultValue",defaultValue);
 
-  type FormData = {
-    prompt: string,
-    amount: string,
-    size: string,
-  }
 
-  const form = useForm<FormData>({
+  const form = useForm<ChatFormData>({
     defaultValues: defaultValue,
     resolver: zodResolver(schema),
   })
@@ -45,33 +40,8 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
   const isSubmitting = form.formState.isSubmitting;
   console.log("エラー内容", form.formState.errors);
 
-  const getRequestData = (values: FormData, chatId: string) => {
-    let apiUrl = "";
-    let apiData = {};
 
-    switch(chatType) {
-      case "conversation":
-        apiUrl = "/api/conversation";
-        apiData = {
-          prompt: values.prompt,
-          chatId: chatId,
-        }
-      break;
-      case "image_generation":
-        apiUrl = "/api/image_generation";
-        apiData = {
-          prompt: values.prompt,
-          amount: values.amount,
-          size: values.size,
-          chatId: chatId,
-        }
-      break;
-    }
-
-    return {apiUrl, apiData}
-  }
-
-  const onSubmit = async(values: FormData) => {
+  const onSubmit = async(values: ChatFormData) => {
     console.log(values.amount);
 
     try {
@@ -93,7 +63,7 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
         chatRef = doc(db, "chats", chatId)
       }
 
-      const {apiUrl, apiData} = getRequestData(values, chatRef.id);
+      const {apiUrl, apiData} = getRequestData(values, chatRef.id, chatType);
       console.log("apiUrl",apiUrl)
       console.log("apiData",apiData)
       const response = await axios.post(apiUrl, apiData);
@@ -130,7 +100,7 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
               name="amount"
               render={({ field }) => (
                 <FormItem className='flex-1'>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select disabled={isSubmitting} onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a verified email to display" />
@@ -152,7 +122,7 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
               name="size"
               render={({ field }) => (
                 <FormItem className='flex-1'>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select disabled={isSubmitting} onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a verified email to display" />

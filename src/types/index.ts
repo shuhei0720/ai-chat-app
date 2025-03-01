@@ -1,5 +1,11 @@
 import { Timestamp } from "firebase/firestore";
 
+export type ChatFormData = {
+  prompt: string,
+  amount: string,
+  size: string,
+}
+
 export type ChatType = 
   | "conversation"
   | "image_generation"

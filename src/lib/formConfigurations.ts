@@ -1,4 +1,4 @@
-import { ChatType } from "@/types";
+import { ChatFormData, ChatType } from "@/types";
 import { conversationSchema, imageGenerationSchema } from "./validationSchema";
 
 export const amountOptions = [
@@ -46,4 +46,30 @@ const formConfig = {
 
 export const getFormConfig = (chatType:ChatType) => {
   return formConfig[chatType]
+}
+
+export const getRequestData = (values: ChatFormData, chatId: string, chatType: ChatType) => {
+  let apiUrl = "";
+  let apiData = {};
+
+  switch(chatType) {
+    case "conversation":
+      apiUrl = "/api/conversation";
+      apiData = {
+        prompt: values.prompt,
+        chatId: chatId,
+      }
+    break;
+    case "image_generation":
+      apiUrl = "/api/image_generation";
+      apiData = {
+        prompt: values.prompt,
+        amount: values.amount,
+        size: values.size,
+        chatId: chatId,
+      }
+    break;
+  }
+
+  return {apiUrl, apiData}
 }
