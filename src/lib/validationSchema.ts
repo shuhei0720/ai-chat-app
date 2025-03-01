@@ -10,3 +10,8 @@ export const imageGenerationSchema = z.object({
   amount: z.string(),
   size: z.string(),
 })
+
+export const textToSpeechSchema = z.object({
+  prompt: z.string().min(1,{message: "1文字以上入力してください。"})
+  .max(4096,{message: "4096文字以下で入力してください。"}),
+})
