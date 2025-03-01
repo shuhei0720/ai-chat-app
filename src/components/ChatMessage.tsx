@@ -16,6 +16,7 @@ import Panel from "@/components/Panel";
 import MessageDisplay from "./MessageDisplay";
 import TextMessageComponent from "./TextMessageComponent";
 import ImageMessageComponent from "./ImageMessageComponent";
+import { cn } from "@/lib/utils";
 
 interface ChatMessageProps {
   chatId?: string,
@@ -59,7 +60,7 @@ const ChatMessage = ({ chatId,chatType}: ChatMessageProps) => {
       return <TextMessageComponent content={message.content}/>
 
       case "image":
-      return <ImageMessageComponent image={message.content}/>
+      return <ImageMessageComponent images={message.content}/>
     }
   };
 
@@ -76,11 +77,9 @@ const ChatMessage = ({ chatId,chatType}: ChatMessageProps) => {
             ) : (
               <BotAvatar />
             )}
-            <div>
+            <div className={cn(message.type === "image" ? "flex-1" : "")}>
               {/* メッセージのタイプによってタグを変える */}
-              <div>
-                {getMessageComponent(message)}
-              </div>
+              <div>{getMessageComponent(message)}</div>
             </div>
           </div>
         ))}
