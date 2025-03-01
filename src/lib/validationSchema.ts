@@ -16,6 +16,14 @@ const ACCEPTED_AUDIO_FORMATS = [
   "video/webm",
 ]
 
+const ACCEPTED_IMAGE_FORMATS = [
+  "image/jpeg",
+  "image/pjpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+]
+
 const ACCEPTED_AUDIO_EXTENSION = [
   "flac",
   "mp3",
@@ -26,6 +34,14 @@ const ACCEPTED_AUDIO_EXTENSION = [
   "ogg",
   "wav",
   "webm",
+]
+
+const ACCEPTED_IMAGE_EXTENSION = [
+  "png",
+  "jpeg ",
+  "jpg",
+  "webp",
+  "gif",
 ]
 
 export const conversationSchema = z.object({
@@ -66,5 +82,28 @@ export const speechToTextSchema = z.object({
       message: "対応していないファイルタイプです。"
     })
 
+
+})
+
+export const imageAnalysisSchema = z.object({
+  prompt: z.string(),
+  files:
+    z.array(
+      z.instanceof(File, {message: "ファイルを選択してください。"})
+      //ファイルの形式
+      .refine((file) => {
+        const fileTypeValid = ACCEPTED_IMAGE_FORMATS.includes(file.type);
+        const fileExtensionValid = ACCEPTED_IMAGE_EXTENSION.includes(
+          file.name.split(".").pop()!
+        );
+        return fileTypeValid && fileExtensionValid;
+      },{
+        message: "対応していないファイルタイプです。"
+      })
+    )
+    //最大サイズ
+    .refine((file) => file.size <= MAX_AUDIO_FILE_SIZE, {
+      message: "20MB以下のファイルを選択してください。"
+    })
 
 })
