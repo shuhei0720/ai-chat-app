@@ -17,6 +17,7 @@ import MessageDisplay from "./MessageDisplay";
 import TextMessageComponent from "./TextMessageComponent";
 import ImageMessageComponent from "./ImageMessageComponent";
 import { cn } from "@/lib/utils";
+import AudioMessageComponent from "./AudioMessageComponent";
 
 interface ChatMessageProps {
   chatId?: string,
@@ -61,6 +62,9 @@ const ChatMessage = ({ chatId,chatType}: ChatMessageProps) => {
 
       case "image":
       return <ImageMessageComponent images={message.content}/>;
+
+      case "audio":
+      return <AudioMessageComponent src={message.content}/>;
     }
   };
 
