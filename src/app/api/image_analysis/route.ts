@@ -3,6 +3,7 @@ import { fileUploadToStorage } from "@/lib/firebase/storage";
 import { FieldValue } from "firebase-admin/firestore";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
+import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -42,59 +43,92 @@ export async function POST(req: Request) {
       type: "image_analysis",
     });
 
+    const messagesRef = db.collection('chats').doc(chatId).collection("messages");
+    const snapShot = await messagesRef.orderBy("created_at", "asc").get();
+
+    const messages:ChatCompletionMessageParam[] = snapShot.docs.map((doc) => {
+      if(doc.data().sender == "user") {
+        //ユーザーメッセージ
+        return {
+          role: "user",
+          content: [
+            // テキスト
+            { type: "text", text: doc.data().content.text },
+            // 画像
+            ...doc.data().content.imageUrl.map((url: string) => {
+              return {
+                type: "image_url",
+                image_url: {
+                  "url": url,
+                },
+              }
+            })
+          ],
+        }
+      } else {
+        return {
+          role: "assistant",
+          content:doc.data().content
+        }
+      }
+    })
+    console.log("messages", messages);
+
     // openAI APIを呼び出してAIの回答を生成
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
-      messages: [
-        // ユーザーメッセージ
-        {
-          role: "user",
-          content: [
-            // テキスト
-            { type: "text", text: prompt },
-            // 画像
-            {
-              type: "image_url",
-              image_url: {
-                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
-              },
-            },
-          ],
-        },
-        // AIメッセージ
-        {
-          role: "assistant",
-          content:"写真には犬が映っています。"
-        },
-        // ユーザーメッセージ
-        {
-          role: "user",
-          content: [
-            // テキスト
-            { type: "text", text: prompt },
-            // 画像
-            {
-              type: "image_url",
-              image_url: {
-                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
-              },
-            },
-          ],
-        },
-      ],
+      messages: messages,
+      
+      // [
+      //   // ユーザーメッセージ
+      //   {
+      //     role: "user",
+      //     content: [
+      //       // テキスト
+      //       { type: "text", text: prompt },
+      //       // 画像
+      //       {
+      //         type: "image_url",
+      //         image_url: {
+      //           "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
+      //         },
+      //       },
+      //     ],
+      //   },
+      //   // AIメッセージ
+      //   {
+      //     role: "assistant",
+      //     content:"写真には犬が映っています。"
+      //   },
+      //   // ユーザーメッセージ
+      //   {
+      //     role: "user",
+      //     content: [
+      //       // テキスト
+      //       { type: "text", text: prompt },
+      //       // 画像
+      //       {
+      //         type: "image_url",
+      //         image_url: {
+      //           "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
+      //         },
+      //       },
+      //     ],
+      //   },
+      // ],
     });
     
     console.log(response.choices[0]);
 
-    
+    const aiREsponse = response.choices[0].message.content;
 
     // // AIの回答をfirestoreに保存
-    // await db.collection("chats").doc(chatId).collection("messages").add({
-    //   content: urls,
-    //   created_at: FieldValue.serverTimestamp(),
-    //   sender: "assistant",
-    //   type: "image",
-    // });
+    await db.collection("chats").doc(chatId).collection("messages").add({
+      content: aiREsponse,
+      created_at: FieldValue.serverTimestamp(),
+      sender: "assistant",
+      type: "text",
+    });
 
 
     return NextResponse.json({ success: "true" });
