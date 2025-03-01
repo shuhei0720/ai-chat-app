@@ -48,6 +48,15 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
     form.setValue("file", file);
   }
 
+  const selectFirstMessage = (values:ChatFormData, chatType:string) => {
+    switch(chatType) {
+      case "speech_to_text":
+        return values.file.name;
+      default:
+        return values.prompt;
+    }
+  }
+
   const onSubmit = async(values: ChatFormData) => {
     console.log(values.amount);
 
@@ -58,7 +67,7 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
         //初めてメッセージを送信した場合にチャットルームを作成
         // Add a new document with a generated id.
         const newChatDocRef = await addDoc(collection(db, "chats"), {
-          first_message: values.prompt,
+          first_message: selectFirstMessage(values, chatType),
           last_updated: serverTimestamp(),
           type: chatType,
           user_id: currentUser?.uid,

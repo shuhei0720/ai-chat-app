@@ -1,5 +1,5 @@
 import { ChatFormData, ChatType } from "@/types";
-import { conversationSchema, imageGenerationSchema, textToSpeechSchema } from "./validationSchema";
+import { conversationSchema, imageGenerationSchema, speechToTextSchema, textToSpeechSchema } from "./validationSchema";
 
 export const amountOptions = [
   {
@@ -40,7 +40,7 @@ const formConfig = {
   image_generation: {schema: imageGenerationSchema, defaultValue: {prompt: "", amount: "1", size: "256x256"}},
   // 以下は仮
   text_to_speech: {schema: textToSpeechSchema, defaultValue: {prompt: "",}},
-  speech_to_text: {schema: conversationSchema, defaultValue: {prompt: "",}},
+  speech_to_text: {schema: speechToTextSchema, defaultValue: {file: undefined}},
   image_analysis: {schema: conversationSchema, defaultValue: {prompt: "",}},
 }
 
@@ -59,7 +59,7 @@ export const getRequestData = (values: ChatFormData, chatId: string, chatType: C
       apiData = {
         prompt: values.prompt,
         chatId: chatId,
-      }
+      };
     break;
     case "image_generation":
       apiUrl = "/api/image_generation";
@@ -68,14 +68,21 @@ export const getRequestData = (values: ChatFormData, chatId: string, chatType: C
         amount: values.amount,
         size: values.size,
         chatId: chatId,
-      }
+      };
     break;
     case "text_to_speech":
       apiUrl = "/api/text_to_speech";
       apiData = {
         prompt: values.prompt,
         chatId: chatId,
-      }
+      };
+    break;
+    case "speech_to_text":
+      apiUrl = "/api/speech_to_text";
+      const formDataSTT = new FormData();
+      formDataSTT.append("file",values.file);
+      formDataSTT.append("chatId",chatId);
+      apiData = formDataSTT;
     break;
   }
 

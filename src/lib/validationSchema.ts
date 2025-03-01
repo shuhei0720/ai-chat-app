@@ -58,7 +58,7 @@ export const speechToTextSchema = z.object({
     //ファイルの形式
     .refine((file) => {
       const fileTypeValid = ACCEPTED_AUDIO_FORMATS.includes(file.type);
-      const fileExtensionValid = ACCEPTED_AUDIO_FORMATS.includes(
+      const fileExtensionValid = ACCEPTED_AUDIO_EXTENSION.includes(
         file.name.split(".").pop()!
       );
       return fileTypeValid && fileExtensionValid;
