@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   try {
     const formData = await req.formData();
     const files = formData.getAll("files") as File[];
-    const prompt = formData.get("prompt");
+    const prompt = formData.get("prompt") as string;
     const chatId = formData.get("chatId") as string;
     console.log(files);
     console.log(prompt);
@@ -43,12 +43,35 @@ export async function POST(req: Request) {
     });
 
     // openAI APIを呼び出してAIの回答を生成
-    // const response = await openai.images.generate({
-    //   model: "dall-e-2",
-    //   prompt: prompt,
-    //   n: parseInt(amount, 10),
-    //   size: size,
-    // });
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "user",
+          content: [
+            // テキスト
+            { type: "text", text: prompt },
+            // 画像
+            ...urls.map((url) => (
+              {
+                type: "image_url" as "image_url",
+                image_url: {
+                  "url": url
+                },
+              }
+            ))
+            // {
+            //   type: "image_url",
+            //   image_url: {
+            //     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
+            //   },
+            // },
+          ],
+        },
+      ],
+    });
+    
+    console.log(response.choices[0]);
 
     
 
