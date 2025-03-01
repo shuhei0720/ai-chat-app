@@ -1,5 +1,5 @@
 "use client"
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form'
 import { Textarea } from '@/components/ui/textarea'
 import { useForm } from 'react-hook-form'
@@ -36,6 +36,12 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
   const { schema, defaultValue } = getFormConfig(chatType);
   console.log("schema",schema);
   console.log("defaultValue",defaultValue);
+
+  useEffect(() => {
+    return () => {
+      imageUrls.forEach((url) => URL.revokeObjectURL(url));
+    }
+  },[])
 
 
   const form = useForm<ChatFormData>({
@@ -116,6 +122,9 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
       }
       if(chatType === "speech_to_text") {
         setAudio(null);
+      } else {
+        imageUrls.forEach((url) => URL.revokeObjectURL(url));
+        setImageUrls([]);
       }
       form.reset();
     }
@@ -128,6 +137,8 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
     if(fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+    
+    URL.revokeObjectURL(imageUrls[index]);
     setImageUrls((prevImageUrls) => prevImageUrls.filter((_, idx) => idx !== index));
     if(files) {
       const updatedFiles = files.filter((_, idx) => idx !== index);
