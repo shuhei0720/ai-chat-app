@@ -4,7 +4,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/
 import { Textarea } from '@/components/ui/textarea'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
-import { LoaderCircle, Send } from 'lucide-react'
+import { LoaderCircle, Paperclip, Send } from 'lucide-react'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { addDoc, collection, doc, serverTimestamp, updateDoc } from 'firebase/firestore'
@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { amountOptions, getFormConfig, getRequestData, sizeOptions } from '@/lib/formConfigurations'
 import { conversationSchema, imageGenerationSchema } from '@/lib/validationSchema'
 import { ChatFormData, ChatType } from '@/types'
+import { Input } from './ui/input'
 
 interface ChatFormProps {
   chatId?: string,
@@ -141,13 +142,34 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
           )}
           
           <div className='flex items-center space-x-2'>
+
+          {/* ファイル */}
+          <FormField
+            control={form.control}
+            name="file"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel><Paperclip /></FormLabel>
+                <FormControl>
+                  <Input className="hidden" type="file" placeholder="shadcn" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
             <FormField
               control={form.control}
               name="prompt"
               render={({field}) => (
                 <FormItem className='w-full flex'>
                   <FormControl>
-                    <Textarea disabled={isSubmitting} {...field} className='bg-slate-200' rows={1}/>
+                    <Textarea
+                      disabled={isSubmitting || chatType === "speech_to_text"}
+                      {...field}
+                      className='bg-slate-200'
+                      rows={1}
+                      placeholder={chatType === "speech_to_text" ? "入力できません" : "チャットを始めよう"}
+                    />
                   </FormControl>
                 </FormItem>
               )}
