@@ -10,10 +10,12 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase/firebaseClient";
-import { TextMessage } from "@/types";
+import { Message, TextMessage } from "@/types";
 import UserAvatar from "@/components/UserAvatar";
 import Panel from "@/components/Panel";
 import MessageDisplay from "./MessageDisplay";
+import TextMessageComponent from "./TextMessageComponent";
+import ImageMessageComponent from "./ImageMessageComponent";
 
 interface ChatMessageProps {
   chatId?: string,
@@ -21,7 +23,7 @@ interface ChatMessageProps {
 }
 
 const ChatMessage = ({ chatId,chatType}: ChatMessageProps) => {
-  const [messages, setMessages] = useState<TextMessage[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   
   const endRef = useRef<null | HTMLDivElement>(null);
 
@@ -51,6 +53,16 @@ const ChatMessage = ({ chatId,chatType}: ChatMessageProps) => {
     return () => unsubscribe();
   }, [chatId]);
 
+  const getMessageComponent = (message:Message) => {
+    switch(message.type) {
+      case "text":
+      return <TextMessageComponent content={message.content}/>
+
+      case "image":
+      return <ImageMessageComponent image={message.content}/>
+    }
+  };
+
   return (
     <>
       {!chatId ? (
@@ -66,9 +78,8 @@ const ChatMessage = ({ chatId,chatType}: ChatMessageProps) => {
             )}
             <div>
               {/* メッセージのタイプによってタグを変える */}
-              <div className="bg-white p-4 rounded-lg shadow break-all whitespace-pre-wrap">
-                <p>{message.content}</p>
-                {/* <MessageDisplay content={message.content}/> */}
+              <div>
+                {getMessageComponent(message)}
               </div>
             </div>
           </div>
