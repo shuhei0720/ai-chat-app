@@ -16,6 +16,18 @@ const ACCEPTED_AUDIO_FORMATS = [
   "video/webm",
 ]
 
+const ACCEPTED_AUDIO_EXTENSION = [
+  "flac",
+  "mp3",
+  "mp4",
+  "mpeg",
+  "mpga",
+  "m4a",
+  "ogg",
+  "wav",
+  "webm",
+]
+
 export const conversationSchema = z.object({
   prompt: z.string().min(1,{message: "1文字以上入力してください。"}),
 })
@@ -46,9 +58,12 @@ export const speechToTextSchema = z.object({
     //ファイルの形式
     .refine((file) => {
       const fileTypeValid = ACCEPTED_AUDIO_FORMATS.includes(file.type);
-      return fileTypeValid;
+      const fileExtensionValid = ACCEPTED_AUDIO_FORMATS.includes(
+        file.name.split(".").pop()!
+      );
+      return fileTypeValid && fileExtensionValid;
     },{
-      message: "タイプです。"
+      message: "対応していないファイルタイプです。"
     })
 
 
