@@ -41,6 +41,12 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
   const isSubmitting = form.formState.isSubmitting;
   console.log("エラー内容", form.formState.errors);
 
+  const handleFileChange = (files:FileList | null) => {
+    console.log(files);
+    if(!files || files.length === 0) return;
+    const file = files[0];
+    form.setValue("file", file);
+  }
 
   const onSubmit = async(values: ChatFormData) => {
     console.log(values.amount);
@@ -87,7 +93,7 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
     } finally {
       form.reset();
     }
-  }
+  };
   return (
     <div className='bg-white p-3'>
       <Form {...form}>
@@ -147,11 +153,20 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
           <FormField
             control={form.control}
             name="file"
-            render={({ field: {value, ...fieldProps} }) => (
+            render={({ field: {value, onChange, ...fieldProps} }) => (
               <FormItem>
                 <FormLabel><Paperclip /></FormLabel>
                 <FormControl>
-                  <Input className="hidden" type="file" placeholder="shadcn" {...fieldProps} />
+                  <Input 
+                    className="hidden"
+                    type="file"
+                    onChange={(event) => {
+                      const files = event.target.files;
+                      console.log(files);
+                      handleFileChange(files);
+                    }}
+                    {...fieldProps}
+                  />
                 </FormControl>
               </FormItem>
             )}
