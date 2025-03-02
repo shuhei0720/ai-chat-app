@@ -1,7 +1,7 @@
 import { bucket, db } from "@/lib/firebase/firebaseAdmin";
 import { NextResponse } from "next/server";
 import { headers } from 'next/headers';
-import { verifyToken } from "@/lib/firebase/auth";
+import { checkUserPermission, verifyToken } from "@/lib/firebase/auth";
 
 export async function DELETE(req:Request, {params}: {params: {chatId: string}}) {
   try {
@@ -22,12 +22,20 @@ export async function DELETE(req:Request, {params}: {params: {chatId: string}}) 
     const user = await verifyToken(token);
 
     if(!user) {
-      return NextResponse.json({error: "無効なトークンです。"},
+      return NextResponse.json(
+        {error: "無効なトークンです。"},
         {status: 401},
       )
     }
 
     // firestoreのデータを操作して良いユーザーか？
+    const hasPermission = checkUserPermission(user.uid, params.chatId)
+    if(!hasPermission) {
+      return NextResponse.json(
+        {error: "あなたはfirestoreのデータを操作する権限がありません。"},
+        {status: 403},
+      )
+    }
 
     const {chatId} = params
     // firestoreからデータを削除する処理
@@ -35,7 +43,7 @@ export async function DELETE(req:Request, {params}: {params: {chatId: string}}) 
     await db.recursiveDelete(chatRef);
 
     // storageからデータを削除する処理
-    const prefix = `${"er9CONFDWqNlIV6PnhGQbSM0ixl1"}/chatRoom/${chatId}`;
+    const prefix = `${user.uid}/chatRoom/${chatId}`;
     const [files] = await bucket.getFiles({prefix: prefix});
     if(files) {
       console.log(`${files.length}枚の削除対象のファイルがありました。`)
