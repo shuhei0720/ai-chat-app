@@ -1,8 +1,34 @@
 import { bucket, db } from "@/lib/firebase/firebaseAdmin";
-import { NextResponse } from "next/server"
+import { NextResponse } from "next/server";
+import { headers } from 'next/headers';
+import { verifyToken } from "@/lib/firebase/auth";
 
 export async function DELETE(req:Request, {params}: {params: {chatId: string}}) {
   try {
+
+    const headersList = await headers()
+    const authHeader = headersList.get('Authorization')
+
+    // トークンが添付されているか？
+    if(!authHeader) {
+      return NextResponse.json(
+        {error: "トークンが添付されていません。"},
+        {status: 401},
+      )
+    }
+
+    const token = authHeader.split("Bearer ")[1];
+    // デコード
+    const user = await verifyToken(token);
+
+    if(!user) {
+      return NextResponse.json({error: "無効なトークンです。"},
+        {status: 401},
+      )
+    }
+
+    // firestoreのデータを操作して良いユーザーか？
+
     const {chatId} = params
     // firestoreからデータを削除する処理
     const chatRef = db.collection("chats").doc(chatId);
