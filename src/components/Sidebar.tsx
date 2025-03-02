@@ -51,7 +51,7 @@ const Sidebar = () => {
     setChatRooms(fetchChatRooms);
   })
   return () => unsubscribe();
-  },[]);
+  },[currentUser]);
 
   const routes = [
     {
