@@ -8,7 +8,8 @@ export async function verifyToken(token: string) {
     return decodedToken;
   } catch(error) {
     console.log("IDトークンの検証エラー",error);
-    throw new Error("無効なトークンです。");
+    // throw new Error("無効なトークンです。");
+    return null;
   }
 }
 
@@ -21,6 +22,7 @@ export async function checkUserPermission(uid: string, chatId: string) {
     }
     const chatData = chatDoc.data();
     console.log("chatData", chatData);
+    console.log("chatData?.user_id === uid", chatData?.user_id === uid);
 
     return chatData?.user_id === uid
   } catch(error) {

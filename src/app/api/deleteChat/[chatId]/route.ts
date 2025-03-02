@@ -20,7 +20,6 @@ export async function DELETE(req:Request, {params}: {params: {chatId: string}}) 
     const token = authHeader.split("Bearer ")[1];
     // デコード
     const user = await verifyToken(token);
-
     if(!user) {
       return NextResponse.json(
         {error: "無効なトークンです。"},
@@ -29,10 +28,10 @@ export async function DELETE(req:Request, {params}: {params: {chatId: string}}) 
     }
 
     // firestoreのデータを操作して良いユーザーか？
-    const hasPermission = checkUserPermission(user.uid, params.chatId)
+    const hasPermission = await checkUserPermission(user.uid, params.chatId)
     if(!hasPermission) {
       return NextResponse.json(
-        {error: "あなたはfirestoreのデータを操作する権限がありません。"},
+        {error: "操作が許可されていないか、リソースが存在しません。"},
         {status: 403},
       )
     }
