@@ -1,6 +1,8 @@
+import { checkUserPermission, verifyToken } from "@/lib/firebase/auth";
 import { db } from "@/lib/firebase/firebaseAdmin";
 import { fileUploadToStorage } from "@/lib/firebase/storage";
 import { FieldValue } from "firebase-admin/firestore";
+import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
@@ -10,9 +12,41 @@ const openai = new OpenAI({
 
 export async function POST(req: Request) {
   try {
+
+    const headersList = await headers()
+    const authHeader = headersList.get('Authorization')
+
+    // トークンが添付されているか？
+    if(!authHeader) {
+      return NextResponse.json(
+        {error: "トークンが添付されていません。"},
+        {status: 401},
+      )
+    }
+
+    const token = authHeader.split("Bearer ")[1];
+    // デコード
+    const user = await verifyToken(token);
+    if(!user) {
+      return NextResponse.json(
+        {error: "無効なトークンです。"},
+        {status: 401},
+      )
+    }
+
     const { prompt, chatId } = await req.json();
     console.log(prompt);
     console.log(chatId);
+
+    // firestoreのデータを操作して良いユーザーか？
+    const hasPermission = await checkUserPermission(user.uid, chatId)
+    if(!hasPermission) {
+      return NextResponse.json(
+        {error: "操作が許可されていないか、リソースが存在しません。"},
+        {status: 403},
+      )
+    }
+
 
     // ユーザーメッセージをfirestoreに保存
     await db.collection("chats").doc(chatId).collection("messages").add({
@@ -33,7 +67,7 @@ export async function POST(req: Request) {
     //バイナリデータに変換->保存パスを設定->ストレージにアップロードして参照URLを取得
         const arrayBuffer = await audioResponse.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
-        const filePath = `${"er9CONFDWqNlIV6PnhGQbSM0ixl1"}/chatRoom/${chatId}`;
+        const filePath = `${user.uid}/chatRoom/${chatId}`;
         const url = await fileUploadToStorage(buffer, filePath, "audio/mpeg");
         console.log("url",url);
 

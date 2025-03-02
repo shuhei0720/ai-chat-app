@@ -1,6 +1,8 @@
+import { checkUserPermission, verifyToken } from "@/lib/firebase/auth";
 import { db } from "@/lib/firebase/firebaseAdmin";
 import { fileUploadToStorage } from "@/lib/firebase/storage";
 import { FieldValue } from "firebase-admin/firestore";
+import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
@@ -11,6 +13,28 @@ const openai = new OpenAI({
 
 export async function POST(req: Request) {
   try {
+
+    const headersList = await headers()
+    const authHeader = headersList.get('Authorization')
+
+    // トークンが添付されているか？
+    if(!authHeader) {
+      return NextResponse.json(
+        {error: "トークンが添付されていません。"},
+        {status: 401},
+      )
+    }
+
+    const token = authHeader.split("Bearer ")[1];
+    // デコード
+    const user = await verifyToken(token);
+    if(!user) {
+      return NextResponse.json(
+        {error: "無効なトークンです。"},
+        {status: 401},
+      )
+    }
+
     const formData = await req.formData();
     const files = formData.getAll("files") as File[];
     const prompt = formData.get("prompt") as string;
@@ -19,6 +43,15 @@ export async function POST(req: Request) {
     console.log(prompt);
     console.log(chatId);
 
+    // firestoreのデータを操作して良いユーザーか？
+    const hasPermission = await checkUserPermission(user.uid, chatId)
+    if(!hasPermission) {
+      return NextResponse.json(
+        {error: "操作が許可されていないか、リソースが存在しません。"},
+        {status: 403},
+      )
+    }
+
     let urls:string[] = []
 
     if(files.length > 0) {
@@ -26,7 +59,7 @@ export async function POST(req: Request) {
       const imageDataPromises = files.map(async(file) => {
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
-        const filePath = `${"er9CONFDWqNlIV6PnhGQbSM0ixl1"}/chatRoom/${chatId}`;
+        const filePath = `${user.uid}/chatRoom/${chatId}`;
         return await fileUploadToStorage(buffer, filePath, file.type);
       });
 

@@ -31,7 +31,7 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
   const[audio,setAudio] = useState<File | null>(null);
   const[imageUrls, setImageUrls] = useState<string[]>([]);
   const router = useRouter();
-  const {currentUser} = useAuth();
+  const { currentUser, userToken } = useAuth();
 
   const { schema, defaultValue } = getFormConfig(chatType);
   console.log("schema",schema);
@@ -101,7 +101,13 @@ const ChatForm = ({chatId,chatType, setChatId}: ChatFormProps) => {
       const {apiUrl, apiData} = getRequestData(values, chatRef.id, chatType);
       console.log("apiUrl",apiUrl)
       console.log("apiData",apiData)
-      const response = await axios.post(apiUrl, apiData);
+      const response = await axios.post(apiUrl, apiData,
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`
+          }
+        }
+      );
       console.log(response);
 
       if(isNewChat) {
