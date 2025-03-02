@@ -24,8 +24,9 @@ const Sidebar = () => {
   const router = useRouter();
   const[chatRooms,setChatRooms] = useState<ChatRoom[]>([]);
   const pathname = usePathname();
-  const {currentUser} = useAuth();
+  const {currentUser, userToken} = useAuth();
   // console.log(pathname);
+  console.log(userToken);
 
   useEffect(() => {
     if(!currentUser) return
@@ -87,7 +88,13 @@ const Sidebar = () => {
 
   const handleDeleteChat = async(chatId: string) => {
     try {
-      const response = await axios.delete(`/api/deleteChat/${chatId}`)
+      const response = await axios.delete(`/api/deleteChat/${chatId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`
+          }
+        }
+      )
       console.log("response",response);
       router.push("/conversation");
     } catch(error) {
